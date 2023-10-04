@@ -1,6 +1,6 @@
 package com.baylor.diabeticselfed.token;
 
-import com.baylor.diabeticselfed.user.User;
+import com.baylor.diabeticselfed.entities.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

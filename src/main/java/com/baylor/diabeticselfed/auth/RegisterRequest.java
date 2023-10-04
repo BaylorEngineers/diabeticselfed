@@ -1,6 +1,6 @@
 package com.baylor.diabeticselfed.auth;
 
-import com.baylor.diabeticselfed.user.Role;
+import com.baylor.diabeticselfed.entities.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

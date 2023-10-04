@@ -1,5 +1,7 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.controller;
 
+import com.baylor.diabeticselfed.user.ChangePasswordRequest;
+import com.baylor.diabeticselfed.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;

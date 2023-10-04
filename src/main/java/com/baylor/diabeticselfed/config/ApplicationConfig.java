@@ -1,7 +1,7 @@
 package com.baylor.diabeticselfed.config;
 
 import com.baylor.diabeticselfed.auditing.ApplicationAuditAware;
-import com.baylor.diabeticselfed.user.UserRepository;
+import com.baylor.diabeticselfed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

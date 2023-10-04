@@ -1,5 +1,6 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.entities;
 
+import com.baylor.diabeticselfed.user.Permission;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -21,20 +22,21 @@ public enum Role {
                   ADMIN_UPDATE,
                   ADMIN_DELETE,
                   ADMIN_CREATE,
-                  MANAGER_READ,
-                  MANAGER_UPDATE,
-                  MANAGER_DELETE,
-                  MANAGER_CREATE
+                  CLINICIAN_READ,
+                  CLINICIAN_UPDATE,
+                  CLINICIAN_DELETE,
+                  CLINICIAN_CREATE
           )
   ),
-  MANAGER(
+  CLINICIAN(
           Set.of(
-                  MANAGER_READ,
-                  MANAGER_UPDATE,
-                  MANAGER_DELETE,
-                  MANAGER_CREATE
+                  CLINICIAN_READ,
+                  CLINICIAN_UPDATE,
+                  CLINICIAN_DELETE,
+                  CLINICIAN_CREATE
           )
-  )
+  ),
+  PATIENT(Collections.emptySet()),
 
   ;
 

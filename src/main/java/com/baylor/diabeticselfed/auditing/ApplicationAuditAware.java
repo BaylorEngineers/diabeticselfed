@@ -1,6 +1,6 @@
 package com.baylor.diabeticselfed.auditing;
 
-import com.baylor.diabeticselfed.user.User;
+import com.baylor.diabeticselfed.entities.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;

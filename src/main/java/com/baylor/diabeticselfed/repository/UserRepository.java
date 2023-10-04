@@ -1,5 +1,6 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.repository;
 
+import com.baylor.diabeticselfed.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.entities;
 
 import com.baylor.diabeticselfed.token.Token;
 import jakarta.persistence.*;

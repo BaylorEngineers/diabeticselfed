@@ -1,5 +1,6 @@
 package com.baylor.diabeticselfed.auth;
 
+import com.baylor.diabeticselfed.entities.Role;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,4 +17,7 @@ public class AuthenticationResponse {
   private String accessToken;
   @JsonProperty("refresh_token")
   private String refreshToken;
+  @JsonProperty("role")
+  private Role role;
+
 }
