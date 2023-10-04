@@ -14,8 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import static com.baylor.diabeticselfed.user.Permission.*;
-import static com.baylor.diabeticselfed.user.Role.ADMIN;
-import static com.baylor.diabeticselfed.user.Role.MANAGER;
+import static com.baylor.diabeticselfed.entities.Role.ADMIN;
+import static com.baylor.diabeticselfed.entities.Role.CLINICIAN;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -47,11 +47,11 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
-                                .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), MANAGER_READ.name())
-                                .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), MANAGER_CREATE.name())
-                                .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), MANAGER_UPDATE.name())
-                                .requestMatchers(DELETE, "/api/v1/management/**").hasAnyAuthority(ADMIN_DELETE.name(), MANAGER_DELETE.name())
+                                .requestMatchers("/api/v1/clinician/**").hasAnyRole(ADMIN.name(), CLINICIAN.name())
+                                .requestMatchers(GET, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_READ.name(), CLINICIAN_READ.name())
+                                .requestMatchers(POST, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_CREATE.name(), CLINICIAN_CREATE.name())
+                                .requestMatchers(PUT, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_UPDATE.name(), CLINICIAN_UPDATE.name())
+                                .requestMatchers(DELETE, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_DELETE.name(), CLINICIAN_DELETE.name())
                                 .anyRequest()
                                 .authenticated()
                 )

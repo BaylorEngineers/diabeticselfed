@@ -8,8 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
-import static com.baylor.diabeticselfed.user.Role.ADMIN;
-import static com.baylor.diabeticselfed.user.Role.MANAGER;
+import static com.baylor.diabeticselfed.entities.Role.ADMIN;
+import static com.baylor.diabeticselfed.entities.Role.CLINICIAN;
 
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
@@ -33,14 +33,14 @@ public class DiabeticSelfEdApplication {
                     .build();
             System.out.println("Admin token: " + service.register(admin).getAccessToken());
 
-            var manager = RegisterRequest.builder()
+            var clinician = RegisterRequest.builder()
                     .firstname("Admin")
                     .lastname("Admin")
-                    .email("manager@mail.com")
+                    .email("clinician@mail.com")
                     .password("password")
-                    .role(MANAGER)
+                    .role(CLINICIAN)
                     .build();
-            System.out.println("Manager token: " + service.register(manager).getAccessToken());
+            System.out.println("Clinician token: " + service.register(clinician).getAccessToken());
 
         };
     }

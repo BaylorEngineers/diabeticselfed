@@ -1,5 +1,8 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.service;
 
+import com.baylor.diabeticselfed.repository.UserRepository;
+import com.baylor.diabeticselfed.user.ChangePasswordRequest;
+import com.baylor.diabeticselfed.entities.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
