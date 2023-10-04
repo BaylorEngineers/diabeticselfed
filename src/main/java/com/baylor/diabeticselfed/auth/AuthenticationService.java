@@ -3,6 +3,7 @@ package com.baylor.diabeticselfed.auth;
 import com.baylor.diabeticselfed.config.JwtService;
 import com.baylor.diabeticselfed.entities.Clinician;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
@@ -24,6 +25,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationService {
   private final UserRepository repository;
+  private final PatientRepository patientRepository;
+
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
@@ -31,32 +34,34 @@ public class AuthenticationService {
 
   public AuthenticationResponse register(RegisterRequest request) {
     var user = User.builder()
-        .firstname(request.getFirstname())
-        .lastname(request.getLastname())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-        .role(request.getRole())
-        .build();
+            .firstname(request.getFirstname())
+            .lastname(request.getLastname())
+            .email(request.getEmail())
+            .password(passwordEncoder.encode(request.getPassword()))
+            .role(request.getRole())
+            .build();
     var savedUser = repository.save(user);
     switch (user.getRole()) {
       case PATIENT:
         Patient patient = new Patient();
         patient.setUser(user);
-        //patient info needed to be added in the future
-        userService.savePatient(patient);
+        patient.setName(request.getFirstname()+" "+request.getLastname());
+        patient.setDOB(request.getDOB());
+        patient.setLevelOfEd(request.getLevelofEdu());
+        patientRepository.save(patient);
         break;
       case CLINICIAN:
         Clinician clinician = new Clinician();
         clinician.setUser(user);
-        userService.saveClinician(clinician);
         break;
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    saveUserToken(savedUser, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+    }
+      var jwtToken = jwtService.generateToken(user);
+      var refreshToken = jwtService.generateRefreshToken(user);
+      saveUserToken(savedUser, jwtToken);
+      return AuthenticationResponse.builder()
+              .accessToken(jwtToken)
+              .refreshToken(refreshToken)
+              .build();
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
