@@ -34,6 +34,15 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
 
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private Patient patient;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private Clinician clinician;
+
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private Admin admin;
+
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return role.getAuthorities();
@@ -47,6 +56,10 @@ public class User implements UserDetails {
   @Override
   public String getUsername() {
     return email;
+  }
+
+  public Role getRole() {
+    return role;
   }
 
   @Override

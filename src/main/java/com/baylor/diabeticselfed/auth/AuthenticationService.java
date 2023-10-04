@@ -1,6 +1,8 @@
 package com.baylor.diabeticselfed.auth;
 
 import com.baylor.diabeticselfed.config.JwtService;
+import com.baylor.diabeticselfed.entities.Clinician;
+import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
@@ -36,6 +38,18 @@ public class AuthenticationService {
         .role(request.getRole())
         .build();
     var savedUser = repository.save(user);
+    switch (user.getRole()) {
+      case PATIENT:
+        Patient patient = new Patient();
+        patient.setUser(user);
+        //patient info needed to be added in the future
+        userService.savePatient(patient);
+        break;
+      case CLINICIAN:
+        Clinician clinician = new Clinician();
+        clinician.setUser(user);
+        userService.saveClinician(clinician);
+        break;
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
@@ -61,6 +75,7 @@ public class AuthenticationService {
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
+            .role(user.getRole())
         .build();
   }
 
