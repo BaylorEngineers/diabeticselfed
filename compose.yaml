@@ -1,10 +1,11 @@
+version: '3'
+
 services:
-  mysql:
-    image: 'mysql:latest'
+  postgres:
+    image: 'postgres:latest'
     environment:
-      - 'MYSQL_DATABASE=diabeticselfed'
-      - 'MYSQL_PASSWORD=selfed@2203'
-      - 'MYSQL_ROOT_PASSWORD=selfed@2203'
-      - 'MYSQL_USER=selfed'
+      - 'POSTGRES_DB=diabeticselfed'
+      - 'POSTGRES_PASSWORD=admin'
+      - 'POSTGRES_USER=postgres'
     ports:
-      - '3306'
+      - '5432:5432'
