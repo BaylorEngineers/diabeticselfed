@@ -8,7 +8,9 @@ import lombok.Data;
 public class Clinician extends User {
 
     private String name;
-
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     public String getName() {
         return name;
     }

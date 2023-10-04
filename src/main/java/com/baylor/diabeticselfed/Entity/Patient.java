@@ -11,6 +11,10 @@ public class Patient extends User {
     private int age;
     private String levelOfEd;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Enumerated(EnumType.STRING)
     private Type type;
 

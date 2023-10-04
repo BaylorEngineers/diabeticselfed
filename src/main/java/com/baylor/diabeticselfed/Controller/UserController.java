@@ -1,4 +1,8 @@
 package com.baylor.diabeticselfed.Controller;
+import com.baylor.diabeticselfed.Entity.Admin;
+import com.baylor.diabeticselfed.Entity.Clinician;
+import com.baylor.diabeticselfed.Entity.Patient;
+import com.baylor.diabeticselfed.Repository.PatientRepository;
 import com.baylor.diabeticselfed.Response.ResponseMessage;
 
 import com.baylor.diabeticselfed.DTO.LoginRequestDTO;
@@ -17,10 +21,14 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequestDTO loginRequest) {
+        System.out.print(loginRequest);
         User user = userService.findByUsername(loginRequest.getUsername());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         boolean isPasswordMatch = encoder.matches(loginRequest.getPassword(), user.getPassword());
 
@@ -43,11 +51,24 @@ public class UserController {
         User user = new User();
         user.setUsername(registrationDTO.getUsername());
         user.setEmail(registrationDTO.getEmail());
-        user.setPassword(hashedPassword); 
+        user.setPassword(hashedPassword);
         user.setRole(registrationDTO.getRole());
 
-        userService.save(user);
+        userService.saveUser(user);
 
+        switch (user.getRole()) {
+            case PATIENT:
+                Patient patient = new Patient();
+                patient.setUser(user);
+                //patient info needed to be added in the future
+                userService.savePatient(patient);
+                break;
+            case CLINICIAN:
+                Clinician clinician = new Clinician();
+                clinician.setUser(user);
+                userService.saveClinician(clinician);
+                break;
+        }
         return new ResponseEntity<>(new ResponseMessage("User registered successfully!"), HttpStatus.OK);
     }
 
