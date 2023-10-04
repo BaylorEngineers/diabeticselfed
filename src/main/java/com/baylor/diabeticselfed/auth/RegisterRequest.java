@@ -20,6 +20,6 @@ public class RegisterRequest {
   private String email;
   private String password;
   private Role role;
-  private Date DOB;
-  private Patient.EducationLevel LevelofEdu;
+  private Date dob;
+  private Patient.EducationLevel levelofedu;
 }

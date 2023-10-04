@@ -33,6 +33,7 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
 
   public AuthenticationResponse register(RegisterRequest request) {
+    System.out.println(request);
     var user = User.builder()
             .firstname(request.getFirstname())
             .lastname(request.getLastname())
@@ -41,13 +42,14 @@ public class AuthenticationService {
             .role(request.getRole())
             .build();
     var savedUser = repository.save(user);
-    switch (user.getRole()) {
+    switch (request.getRole()) {
       case PATIENT:
+
         Patient patient = new Patient();
         patient.setUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());
-        patient.setDOB(request.getDOB());
-        patient.setLevelOfEd(request.getLevelofEdu());
+        patient.setDOB(request.getDob());
+        patient.setLevelOfEd(request.getLevelofedu());
         patientRepository.save(patient);
         break;
       case CLINICIAN:
