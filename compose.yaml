@@ -5,7 +5,7 @@ services:
     image: 'postgres:latest'
     environment:
       - 'POSTGRES_DB=diabeticselfed'
-      - 'POSTGRES_PASSWORD=ADMIN'
+      - 'POSTGRES_PASSWORD=admin'
       - 'POSTGRES_USER=postgres'
     ports:
       - '5432:5432'
