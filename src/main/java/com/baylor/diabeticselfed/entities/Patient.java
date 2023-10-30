@@ -7,7 +7,7 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "patients")
+@Table(name = "patient")
 public class Patient extends User {
 
     private String name;
@@ -26,7 +26,7 @@ public class Patient extends User {
     }
     public enum EducationLevel {
         OTHER,
-        HIGHSHCOOL,
+        HIGHSCHOOL,
         UNDERGRADUATE,
         GRADUATE
     }

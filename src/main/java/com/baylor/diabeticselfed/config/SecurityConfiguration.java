@@ -13,9 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
+import static com.baylor.diabeticselfed.entities.Role.*;
 import static com.baylor.diabeticselfed.user.Permission.*;
-import static com.baylor.diabeticselfed.entities.Role.ADMIN;
-import static com.baylor.diabeticselfed.entities.Role.CLINICIAN;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -35,7 +34,8 @@ public class SecurityConfiguration {
             "/configuration/security",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html"};
+            "/swagger-ui.html",
+            "/api/v1/messages"};
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                                 .requestMatchers(POST, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_CREATE.name(), CLINICIAN_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_UPDATE.name(), CLINICIAN_UPDATE.name())
                                 .requestMatchers(DELETE, "/api/v1/clinician/**").hasAnyAuthority(ADMIN_DELETE.name(), CLINICIAN_DELETE.name())
+                                .requestMatchers("/api/v1/messages/**").hasAnyRole(PATIENT.name(), CLINICIAN.name())
                                 .anyRequest()
                                 .authenticated()
                 )
