@@ -1,7 +1,9 @@
 package com.baylor.diabeticselfed.auth;
 
+import com.baylor.diabeticselfed.entities.Invitation;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +17,12 @@ import java.io.IOException;
 public class AuthenticationController {
 
   private final AuthenticationService service;
+
+  @PostMapping("/invite")
+  @CrossOrigin(origins = "http://localhost:3000")
+  public Invitation inviteUser(@RequestParam @Email String email) {
+    return service.createInvitation(email);
+  }
 
   @CrossOrigin(origins = "http://localhost:3000")
   @PostMapping("/register")
