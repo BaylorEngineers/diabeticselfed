@@ -1,10 +1,9 @@
 package com.baylor.diabeticselfed.auth;
 
-<<<<<<< Updated upstream
-=======
+
 import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
->>>>>>> Stashed changes
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
