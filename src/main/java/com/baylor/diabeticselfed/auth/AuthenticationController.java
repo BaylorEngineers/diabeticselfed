@@ -6,6 +6,7 @@ import com.baylor.diabeticselfed.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,12 @@ public class AuthenticationController {
 @Autowired
 private UserRepository userRepository;
   private final AuthenticationService service;
+
+  @PostMapping("/invite")
+  @CrossOrigin(origins = "http://localhost:3000")
+  public Invitation inviteUser(@RequestParam @Email String email) {
+    return service.createInvitation(email);
+  }
 
   @CrossOrigin(origins = "http://localhost:3000")
   @PostMapping("/register")
