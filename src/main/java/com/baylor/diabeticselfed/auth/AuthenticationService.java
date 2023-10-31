@@ -94,6 +94,8 @@ public class AuthenticationService {
       return AuthenticationResponse.builder()
               .accessToken(jwtToken)
               .refreshToken(refreshToken)
+              .userID(user.getId())
+              .patientID(user.getId()+1)
               .build();
   }
 
@@ -114,6 +116,8 @@ public class AuthenticationService {
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
             .role(user.getRole())
+            .userID(user.getId())
+            .patientID(user.getId()+1)
         .build();
   }
 
