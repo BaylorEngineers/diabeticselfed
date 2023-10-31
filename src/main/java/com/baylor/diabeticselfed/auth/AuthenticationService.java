@@ -50,7 +50,7 @@ public class AuthenticationService {
 //                .DOB(request.getDob())
 //                .LevelOfEd(request.getLevelofedu());
         Patient patient = new Patient();
-        patient.setUser(user);
+//        patient.setUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
@@ -59,7 +59,7 @@ public class AuthenticationService {
         break;
       case CLINICIAN:
         Clinician clinician = new Clinician();
-        clinician.setUser(user);
+//        clinician.setUser(user);
         break;
     }
       var jwtToken = jwtService.generateToken(user);

@@ -14,9 +14,9 @@ public class Patient extends User {
     private Date DOB;
     @Enumerated(EnumType.STRING)
     private EducationLevel levelOfEd;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     @Enumerated(EnumType.STRING)
     private Type type;

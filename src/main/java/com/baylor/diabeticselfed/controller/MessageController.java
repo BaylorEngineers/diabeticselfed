@@ -1,12 +1,17 @@
 package com.baylor.diabeticselfed.controller;
 
+import com.baylor.diabeticselfed.dto.MessageDTO;
 import com.baylor.diabeticselfed.entities.Message;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.MessageRepository;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,20 +22,48 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MessageController {
 
+    private final SimpMessagingTemplate messagingTemplate;
+
     private final MessageService messageService;
+    @Autowired
     private UserRepository userRepository;
 
-    @PostMapping("/send")
-    public Message sendMessage(@RequestParam Integer senderId,
-                               @RequestParam Integer receiverId,
-                               @RequestParam String content) {
-        User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
-        User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found"));
+//    @GetMapping("/send")
+//    public  ResponseEntity<?> sendMessage() {
+//
+//        return ResponseEntity.ok("Hello World");
+//    }
+//    @PostMapping("/send")
+//    public  ResponseEntity<?> sendMessage(@RequestParam String content) {
+//
+//        return ResponseEntity.ok("Hello World");
+//    }
 
-        return messageService.sendMessage(sender, receiver, content);
+
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/send")
+    public ResponseEntity<Message> sendMessage(@RequestBody MessageDTO messageDTO) {
+        try {
+            User sender = userRepository.findById(messageDTO.getSenderId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
+            User receiver = userRepository.findById(messageDTO.getReceiverId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found"));
+
+            Message sentMessage = messageService.sendMessage(sender, receiver, messageDTO.getContent());
+            System.out.println("Send");
+            // Notify WebSocket subscribers about the new message
+            messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), sentMessage);
+            System.out.println("Send finish");
+            return new ResponseEntity<>(sentMessage, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
 
     @GetMapping("/conversation")
     public List<Message> getMessagesBetweenUsers(@RequestParam Integer userId1,

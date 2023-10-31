@@ -20,6 +20,11 @@ public class MessageService {
         message.setReceiver(receiver);
         message.setContent(content);
         message.setTimestamp(new Date());
+
+        // Manage bidirectional relationship
+        sender.getSentMessages().add(message);
+        receiver.getReceivedMessages().add(message);
+
         return messageRepository.save(message);
     }
 
