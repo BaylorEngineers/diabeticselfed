@@ -1,5 +1,6 @@
 package com.baylor.diabeticselfed.controller;
 
+import com.baylor.diabeticselfed.dto.LastMessageDTO;
 import com.baylor.diabeticselfed.dto.MessageDTO;
 import com.baylor.diabeticselfed.entities.Message;
 import com.baylor.diabeticselfed.entities.Role;
@@ -69,9 +70,20 @@ public class MessageController {
         }
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/last-messages/{userId}")
+    public ResponseEntity<?> getLastMessagesForEachReceiver(@PathVariable Integer userId) {
+        try {
+            List<LastMessageDTO> dtos = messageService.getLastMessageForEachReceiver(userId);
+            return ResponseEntity.ok(dtos);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(e.getReason(), e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
-
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/conversation")
     public List<Message> getMessagesBetweenUsers(@RequestParam Integer userId1,
                                                  @RequestParam Integer userId2) {
