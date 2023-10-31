@@ -1,7 +1,6 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,10 +10,17 @@ import java.time.LocalDateTime;
 @Table(name = "weight_tracker")
 public class Weight_Tracker {
 
+    @Id
+    @GeneratedValue
+    private Integer id;
     private int patientId;
     private LocalDateTime date;
     private int height;
     private int weight;
+
+    public Integer getId() {
+        return id;
+    }
 
     public int getPatientId() { return patientId; }
 

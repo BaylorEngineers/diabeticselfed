@@ -1,6 +1,8 @@
 package com.baylor.diabeticselfed.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -11,15 +13,17 @@ import java.time.LocalDateTime;
 @Table(name = "forum_post")
 public class Forum_Post {
 
-    private int postId;
+    @Id
+    @GeneratedValue
+    private Integer id;
     private int patientId;
     private String title;
     private String content;
     private LocalDateTime time_stamp;
 
-    public int getPostId() { return postId; }
-
-    public void setPostId(int postId) { this.postId = postId; }
+    public Integer getId() {
+        return id;
+    }
 
     public int getPatientId() { return patientId; }
 

@@ -1,6 +1,8 @@
 package com.baylor.diabeticselfed.entities;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -9,12 +11,14 @@ import lombok.Data;
 @Table(name = "question")
 public class Question {
 
-    private int questionId;
+    @Id
+    @GeneratedValue
+    private Integer id;
     private String description;
 
-    public int getQuestionId() { return questionId; }
-
-    public void setQuestionId(int questionId) { this.questionId = questionId; }
+    public Integer getId() {
+        return id;
+    }
 
     public String getDescription() { return description; }
 

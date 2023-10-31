@@ -1,7 +1,6 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,9 +10,16 @@ import java.time.LocalDateTime;
 @Table(name = "motivation_message")
 public class Motivational_Message {
 
+    @Id
+    @GeneratedValue
+    private Integer id;
     private int patientId;
     private LocalDateTime date;
     private String message_content;
+
+    public Integer getId() {
+        return id;
+    }
 
     public int getPatientId() { return patientId; }
 
