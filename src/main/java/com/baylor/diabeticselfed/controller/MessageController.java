@@ -2,6 +2,7 @@ package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.MessageDTO;
 import com.baylor.diabeticselfed.entities.Message;
+import com.baylor.diabeticselfed.entities.Role;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.MessageRepository;
 import com.baylor.diabeticselfed.repository.UserRepository;
@@ -43,12 +44,17 @@ public class MessageController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/send")
-    public ResponseEntity<Message> sendMessage(@RequestBody MessageDTO messageDTO) {
+    public ResponseEntity<?> sendMessage(@RequestBody MessageDTO messageDTO) {
         try {
             User sender = userRepository.findById(messageDTO.getSenderId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
             User receiver = userRepository.findById(messageDTO.getReceiverId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Receiver not found"));
+
+            // Check if both sender and receiver have the PATIENT role
+            if (sender.getRole() == Role.PATIENT && receiver.getRole() == Role.PATIENT) {
+                return new ResponseEntity<>("Patient cannot send a message to Patient", HttpStatus.BAD_REQUEST);
+            }
 
             Message sentMessage = messageService.sendMessage(sender, receiver, messageDTO.getContent());
             System.out.println("Send");
@@ -62,6 +68,7 @@ public class MessageController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
 
 
 

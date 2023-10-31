@@ -1,8 +1,15 @@
 package com.baylor.diabeticselfed.auth;
 
+<<<<<<< Updated upstream
+=======
+import com.baylor.diabeticselfed.entities.Invitation;
+import com.baylor.diabeticselfed.repository.UserRepository;
+>>>>>>> Stashed changes
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +20,21 @@ import java.io.IOException;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-
+@Autowired
+private UserRepository userRepository;
   private final AuthenticationService service;
 
   @CrossOrigin(origins = "http://localhost:3000")
   @PostMapping("/register")
-  public ResponseEntity<AuthenticationResponse> register(
-      @RequestBody RegisterRequest request
-  ) {
-    return ResponseEntity.ok(service.register(request));
+  public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
+    // Check if the email already exists in the database
+    if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+      return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
+    }
+    AuthenticationResponse response = service.register(request);
+    return ResponseEntity.ok(response);
   }
+
   @CrossOrigin(origins = "http://localhost:3000")
   @PostMapping("/authenticate")
   public ResponseEntity<AuthenticationResponse> authenticate(
