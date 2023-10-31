@@ -17,8 +17,8 @@ public class Module_Log {
     @GeneratedValue
     private Integer id;
     private int patientId;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private LocalDateTime startT;
+    private LocalDateTime endT;
 
     public Integer getId() {
         return id;
@@ -28,11 +28,11 @@ public class Module_Log {
 
     public void setPatientId(int patientId) { this.patientId = patientId; }
 
-    public LocalDateTime getStart() { return start; }
+    public LocalDateTime getStart() { return startT; }
 
-    public void setStart(LocalDateTime start) { this.start = start; }
+    public void setStart(LocalDateTime start) { this.startT = start; }
 
-    public LocalDateTime getEnd() { return end; }
+    public LocalDateTime getEnd() { return endT; }
 
-    public void setEnd(LocalDateTime end) { this.end = end; }
+    public void setEnd(LocalDateTime end) { this.endT = end; }
 }

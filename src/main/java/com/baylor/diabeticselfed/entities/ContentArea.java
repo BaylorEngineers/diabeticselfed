@@ -18,8 +18,8 @@ public class ContentArea {
 
     private String name;
 
-    @OneToMany(mappedBy = "ContentArea")
-    private List<Module> modules;
+//    @OneToMany(mappedBy = "ContentArea")
+//    private List<Module> modules;
 
     public Integer getId() {
         return id;
