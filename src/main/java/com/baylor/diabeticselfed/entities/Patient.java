@@ -12,7 +12,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "patient")
-public class Patient {
+public class Patient extends User{
 
     @Id
     @GeneratedValue
