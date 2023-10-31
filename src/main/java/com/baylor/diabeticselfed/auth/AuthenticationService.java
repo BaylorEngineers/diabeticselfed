@@ -67,7 +67,7 @@ public class AuthenticationService {
             .build();
 
     var savedUser = repository.save(user);
-
+    var temp = new Patient();
     switch (request.getRole()) {
       case PATIENT:
 
@@ -76,11 +76,12 @@ public class AuthenticationService {
 //                .DOB(request.getDob())
 //                .LevelOfEd(request.getLevelofedu());
         Patient patient = new Patient();
-//        patient.setUser(user);
+        patient.setUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
-        var temp = patientRepository.save(patient);
+        patient.setEmail(request.getEmail());
+        temp = patientRepository.save(patient);
         System.out.println(temp);
         break;
       case CLINICIAN:
@@ -95,7 +96,7 @@ public class AuthenticationService {
               .accessToken(jwtToken)
               .refreshToken(refreshToken)
               .userID(user.getId())
-              .patientID(user.getId()+1)
+              .patientID(temp.getId())
               .build();
   }
 
@@ -112,12 +113,13 @@ public class AuthenticationService {
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
+    Patient temp = patientRepository.findByUser(user).get();
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
             .role(user.getRole())
             .userID(user.getId())
-            .patientID(user.getId()+1)
+            .patientID(temp.getId())
         .build();
   }
 

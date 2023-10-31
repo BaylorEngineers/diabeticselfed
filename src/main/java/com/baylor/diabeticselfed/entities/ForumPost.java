@@ -1,27 +1,31 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.*;
-
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.Data;
+import java.util.Date;
 
 @Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@Table(name = "forum_post")
+@Table(name = "forumpost")
 public class ForumPost {
 
     @Id
-    @GeneratedValue
-    private Integer id;
-    private int patientId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    @JsonBackReference(value = "patient-forumpost")
+    @JsonIgnore
+    private Patient patient;
+
     private String title;
+
+    @Lob
     private String content;
-    private LocalDateTime time_stamp;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date postDate;
 }

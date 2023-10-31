@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -38,17 +39,18 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
 
-  @JsonBackReference
+
+  @JsonBackReference(value = "user-sentMessages")
   @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Message> sentMessages;
 
-  @JsonBackReference
+  @JsonBackReference(value = "user-receivedMessages")
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Message> receivedMessages;
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return role.getAuthorities();
-  }
+//  @Override
+//  public Collection<? extends GrantedAuthority> getAuthorities() {
+//    return role.getAuthorities();
+//  }
 
   @Override
   public String getPassword() {
@@ -83,4 +85,13 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     return true;
   }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    if(role == null) {
+      return Collections.emptyList();
+    }
+    return role.getAuthorities();
+  }
+
 }
