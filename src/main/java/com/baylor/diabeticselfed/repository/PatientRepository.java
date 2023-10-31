@@ -3,6 +3,7 @@ package com.baylor.diabeticselfed.repository;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
