@@ -12,8 +12,15 @@ import java.util.Date;
 @Getter
 @Setter
 @Table(name = "patient")
-public class Patient extends User {
+public class Patient {
 
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    private User user;
     private String name;
     private Date DOB;
     @Enumerated(EnumType.STRING)

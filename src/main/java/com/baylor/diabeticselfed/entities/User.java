@@ -25,6 +25,7 @@ public class User implements UserDetails {
 
   @Id
   @GeneratedValue
+  @Column(name = "id")
   private Integer id;
   private String firstname;
   private String lastname;

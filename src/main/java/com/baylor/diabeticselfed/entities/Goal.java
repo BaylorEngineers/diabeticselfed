@@ -18,6 +18,7 @@ public class Goal {
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
+    private Integer patientId;
     private Integer weightLossPercent;
+    private boolean isAccomplished;
 }
