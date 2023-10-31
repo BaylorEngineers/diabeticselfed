@@ -1,7 +1,7 @@
 package com.baylor.diabeticselfed.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import com.baylor.diabeticselfed.token.Token;
 
@@ -9,6 +9,10 @@ import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "content_area")
 public class ContentArea {
 
@@ -20,17 +24,4 @@ public class ContentArea {
 
 //    @OneToMany(mappedBy = "ContentArea")
 //    private List<Module> modules;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
 }

@@ -1,12 +1,16 @@
 package com.baylor.diabeticselfed.entities;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.util.Date;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "patient")
 public class Patient extends User {
 
