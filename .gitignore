@@ -12,9 +12,9 @@
 # Ignore logs
 logs/
 
-# Ignore application properties files (e.g., application.yml or application.yml)
-/src/main/resources/application.yml
-/src/main/resources/application.yml
+## Ignore application properties files (e.g., application.yml or application.yml)
+#/src/main/resources/application.yml
+#/src/main/resources/application.yml
 
 # Ignore build-specific files
 /build/
