@@ -12,9 +12,9 @@ import lombok.Data;
 @Entity
 @Table(name = "admins")
 public class Admin extends User {
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
     private String name;
 
 }

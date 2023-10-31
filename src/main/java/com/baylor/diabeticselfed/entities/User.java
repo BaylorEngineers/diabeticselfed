@@ -1,6 +1,8 @@
 package com.baylor.diabeticselfed.entities;
 
 import com.baylor.diabeticselfed.token.Token;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
+//@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
 
   @Id
@@ -34,15 +37,13 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "user")
   private List<Token> tokens;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  private Patient patient;
+  @JsonBackReference
+  @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Message> sentMessages;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  private Clinician clinician;
-
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  private Admin admin;
-
+  @JsonBackReference
+  @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Message> receivedMessages;
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return role.getAuthorities();

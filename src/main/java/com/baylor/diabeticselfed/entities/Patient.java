@@ -7,16 +7,16 @@ import java.util.Date;
 
 @Entity
 @Data
-@Table(name = "patients")
+@Table(name = "patient")
 public class Patient extends User {
 
     private String name;
     private Date DOB;
     @Enumerated(EnumType.STRING)
     private EducationLevel levelOfEd;
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     @Enumerated(EnumType.STRING)
     private Type type;
@@ -26,7 +26,7 @@ public class Patient extends User {
     }
     public enum EducationLevel {
         OTHER,
-        HIGHSHCOOL,
+        HIGHSCHOOL,
         UNDERGRADUATE,
         GRADUATE
     }
