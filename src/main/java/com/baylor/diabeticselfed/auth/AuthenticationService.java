@@ -3,34 +3,58 @@ package com.baylor.diabeticselfed.auth;
 import com.baylor.diabeticselfed.config.JwtService;
 import com.baylor.diabeticselfed.entities.Clinician;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
+import com.baylor.diabeticselfed.service.MailService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
 import com.baylor.diabeticselfed.entities.User;
+import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
   private final UserRepository repository;
   private final PatientRepository patientRepository;
+  @Autowired
+  private InvitationRepository invitationRepository;
 
   private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
+  @Autowired
+  private MailService mailService;
+
+  @Transactional
+  public Invitation createInvitation(String email) {
+    Invitation invite = new Invitation();
+    invite.setEmail(email);
+    invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
+    invite.setToken(UUID.randomUUID().toString());
+    invite.setUsed(false);
+
+    mailService.sendInvitationEmail(invite.getEmail(), invite.getToken());
+
+    return invitationRepository.save(invite);
+  }
 
   public AuthenticationResponse register(RegisterRequest request) {
     System.out.println(request);
@@ -41,7 +65,9 @@ public class AuthenticationService {
             .password(passwordEncoder.encode(request.getPassword()))
             .role(request.getRole())
             .build();
+
     var savedUser = repository.save(user);
+
     switch (request.getRole()) {
       case PATIENT:
 
