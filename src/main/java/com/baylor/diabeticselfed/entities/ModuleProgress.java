@@ -9,11 +9,15 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "question")
-public class Question {
+@Table(name = "module_progress")
+public class ModuleProgress {
 
     @Id
     @GeneratedValue
     private Integer id;
-    private String description;
+
+    private int patientId;
+    private int moduleId;
+    private int completed_percentage;
+
 }
