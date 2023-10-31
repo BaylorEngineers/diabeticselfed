@@ -27,9 +27,6 @@ public class Patient extends User{
     @GeneratedValue
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    private User user;
     private String name;
     private Date DOB;
     private String email;
