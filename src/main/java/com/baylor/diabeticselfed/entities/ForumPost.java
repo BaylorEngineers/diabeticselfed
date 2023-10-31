@@ -6,18 +6,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Table(name = "module")
-public class Module {
+@Table(name = "forum_post")
+public class ForumPost {
 
     @Id
     @GeneratedValue
     private Integer id;
-    private String name;
-    private String description;
+    private int patientId;
+    private String title;
+    private String content;
+    private LocalDateTime time_stamp;
 }
