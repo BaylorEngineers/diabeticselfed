@@ -10,9 +10,6 @@ import lombok.Data;
 @Data
 @Table(name = "clinicians")
 public class Clinician extends User {
-//    @OneToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
     private String name;
 
     public String getName() {
