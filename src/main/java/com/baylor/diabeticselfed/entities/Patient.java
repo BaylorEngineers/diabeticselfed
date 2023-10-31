@@ -1,22 +1,51 @@
 package com.baylor.diabeticselfed.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
 @Table(name = "patient")
-public class Patient extends User {
+public class Patient extends User{
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @Column(name = "id", nullable = false)
+//    private Long id;
+
+
 
     private String name;
     private Date DOB;
+    private String email;
     @Enumerated(EnumType.STRING)
     private EducationLevel levelOfEd;
 
     @Enumerated(EnumType.STRING)
     private Type type;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;
+
+
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonManagedReference(value = "patient-forumpost")
+    @JsonIgnore
+    private List<ForumPost> forumPosts;
+
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public enum Type {
         TYPE1, TYPE2, TYPE3
