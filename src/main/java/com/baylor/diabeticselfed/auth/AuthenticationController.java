@@ -26,13 +26,22 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class AuthenticationController {
-@Autowired
-private UserRepository userRepository;
+  @Autowired
+  private UserRepository userRepository;
   private final AuthenticationService service;
+  @Autowired
+  private final InvitationRepository invitationRepository;
 
-  @PostMapping("/invite")
+
   @CrossOrigin(origins = "http://localhost:3000")
-  public ResponseEntity<Invitation> inviteUser(@RequestBody InvitationDto invitationDto) {
+  @PostMapping("/invite")
+  public ResponseEntity<?> inviteUser(@RequestBody InvitationDto invitationDto) {
+    System.out.println(invitationDto.getEmail());
+    System.out.println(invitationDto.getRole());
+    if (userRepository.findByEmail(invitationDto.getEmail()).isPresent()) {
+      System.out.println("Email is already registered");
+      return new ResponseEntity<>("Email is already registered", HttpStatus.BAD_REQUEST);
+    }
     Invitation invitation = service.createInvitation(invitationDto.getEmail(), Role.valueOf(invitationDto.getRole()));
     return new ResponseEntity<>(invitation, HttpStatus.CREATED);
   }
@@ -44,7 +53,6 @@ private UserRepository userRepository;
       return new ResponseEntity<>("User already exists", HttpStatus.BAD_REQUEST);
     }
 
-    InvitationRepository invitationRepository = null;
     Optional<Invitation> optionalInvitation = Optional.ofNullable(invitationRepository.findByToken(request.getToken()));
     if (optionalInvitation.isEmpty()) {
       return new ResponseEntity<>("Invalid invitation token", HttpStatus.BAD_REQUEST);

@@ -70,7 +70,7 @@ public class AuthenticationService {
       case PATIENT:
         Patient patient = new Patient();
         patient.setPatientUser(user);
-        patient.setName(request.getFirstname()+" "+request.getLastname());
+        patient.setName(request.getFirstname() + " " + request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
         patient.setEmail(request.getEmail());
