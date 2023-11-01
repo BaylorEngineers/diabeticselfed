@@ -60,3 +60,6 @@ Thumbs.db
 # Ignore Gradle-specific files
 .gradle/
 build/
+
+# Ignore database configurations
+src/main/resources/application.yml
