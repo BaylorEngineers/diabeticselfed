@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -12,13 +13,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "weight_tracker")
-public class Weight_Tracker {
+public class WeightTracker {
 
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
-    private LocalDateTime date;
-    private int height;
-    private int weight;
+    private Integer patientId;
+    private Date dateT;
+    private Integer height;
+    private Integer weight;
 }
