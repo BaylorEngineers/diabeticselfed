@@ -3,6 +3,7 @@ package com.baylor.diabeticselfed.auth;
 import com.baylor.diabeticselfed.config.JwtService;
 import com.baylor.diabeticselfed.entities.Clinician;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.MailService;
@@ -33,6 +34,8 @@ import java.util.UUID;
 public class AuthenticationService {
   private final UserRepository repository;
   private final PatientRepository patientRepository;
+
+  private final ClinicianRepository clinicianRepository;
   @Autowired
   private InvitationRepository invitationRepository;
 
@@ -86,7 +89,12 @@ public class AuthenticationService {
         break;
       case CLINICIAN:
         Clinician clinician = new Clinician();
-//        clinician.setUser(user);
+        clinician.setClinicianUser(user);
+        clinician.setName(request.getFirstname() + request.getLastname());
+        clinician.setEmail(request.getEmail());
+        clinician.setFirstname(request.getFirstname());
+        clinician.setLastname(request.getLastname());
+//        clinicianRepository.save(clinician);
         break;
     }
       var jwtToken = jwtService.generateToken(user);
