@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ClinicianRepository extends JpaRepository<ViewPatientSummary, Integer> {
 
-    @Query("SELECT v FROM ViewPatientSummary v WHERE v.patientId = :patientId")
-    List<ViewPatientSummary> findPatientSummary(@Param("patientId") int patientId);
+    @Query("SELECT v FROM ViewPatientSummary v")
+    List<ViewPatientSummary> findAllPatientSummary();
 }

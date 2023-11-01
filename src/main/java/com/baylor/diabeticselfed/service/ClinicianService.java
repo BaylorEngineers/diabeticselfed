@@ -16,14 +16,12 @@ public class ClinicianService {
     private final ClinicianRepository clinicianRepository;
     private final JdbcTemplate jdbcTemplate;
 
-//    public List<ViewPatientSummary> getViewPatientSummary() {
-//        refreshMaterializedView();
-//        return clinicianRepository.findAllPatientSummary();
-//    }
-
-    public List<ViewPatientSummary> getAllPatientSummary() {
-        return clinicianRepository.findAll();
+    public List<ViewPatientSummary> getViewPatientSummary() {
+        refreshMaterializedView();
+        return clinicianRepository.findAllPatientSummary();
     }
+
+
     private void refreshMaterializedView() {
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT count(*) FROM pg_matviews WHERE matviewname = 'view_patient_summary'",

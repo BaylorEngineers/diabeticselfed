@@ -33,7 +33,7 @@ public class UserController {
     @GetMapping("/viewpatientsummary")
 
     public ResponseEntity<List<ViewPatientSummary>> getAllPatientSummary() {
-        List<ViewPatientSummary> patientSummary = clinicianService.getAllPatientSummary();
+        List<ViewPatientSummary> patientSummary = clinicianService.getViewPatientSummary();
         return ResponseEntity.ok(patientSummary);
     }
 }

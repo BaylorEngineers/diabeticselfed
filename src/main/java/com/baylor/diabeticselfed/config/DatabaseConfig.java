@@ -32,29 +32,4 @@ public class DatabaseConfig {
                     "  LEFT JOIN question q ON s.question_id = q.id");
         };
     }
-
-//    @Bean
-//    public CommandLineRunner refreshMaterializedView(JdbcTemplate jdbcTemplate) {
-//        return args -> {
-//            while (true) {
-//                jdbcTemplate.execute("REFRESH MATERIALIZED VIEW view_patient_summary");
-//                Thread.sleep(60000);  // sleep for 1 minute
-//            }
-//        };
-//    }
-
-//    @Bean
-//    public CommandLineRunner refreshMaterializedView(JdbcTemplate jdbcTemplate) {
-//        return args -> {
-//            while (true) {
-//                Integer count = jdbcTemplate.queryForObject(
-//                        "SELECT count(*) FROM pg_matviews WHERE matviewname = 'view_patient_summary'",
-//                        Integer.class);
-//                if (count != null && count > 0) {
-//                    jdbcTemplate.execute("REFRESH MATERIALIZED VIEW view_patient_summary");
-//                }
-//                Thread.sleep(60);  // sleep for 1 minute
-//            }
-//        };
-//    }
 }
