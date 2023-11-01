@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +30,10 @@ public class WeightTrackerService {
 
     public Optional<WeightTracker> getReportByPatientIdANDDateT(Integer patientId, Date date) {
         return weightTrackerRepository.findByPatientIdAndDateT(patientId, date);
+    }
+
+    public List<WeightTracker> getReportByPatientId(Integer patientId) {
+        return weightTrackerRepository.findByPatientId(patientId);
     }
 
 }
