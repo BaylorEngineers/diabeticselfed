@@ -1,7 +1,9 @@
 package com.baylor.diabeticselfed.auth;
 
 
+import com.baylor.diabeticselfed.dto.InvitationDto;
 import com.baylor.diabeticselfed.entities.Invitation;
+import com.baylor.diabeticselfed.entities.Role;
 import com.baylor.diabeticselfed.repository.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +28,9 @@ private UserRepository userRepository;
 
   @PostMapping("/invite")
   @CrossOrigin(origins = "http://localhost:3000")
-  public Invitation inviteUser(@RequestParam @Email String email) {
-    return service.createInvitation(email);
+  public ResponseEntity<Invitation> inviteUser(@RequestBody InvitationDto invitationDto) {
+    Invitation invitation = service.createInvitation(invitationDto.getEmail(), Role.valueOf(invitationDto.getRole()));
+    return new ResponseEntity<>(invitation, HttpStatus.CREATED);
   }
 
   @CrossOrigin(origins = "http://localhost:3000")

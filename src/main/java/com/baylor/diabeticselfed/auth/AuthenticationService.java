@@ -1,16 +1,13 @@
 package com.baylor.diabeticselfed.auth;
 
 import com.baylor.diabeticselfed.config.JwtService;
-import com.baylor.diabeticselfed.entities.Clinician;
-import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.*;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.MailService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
-import com.baylor.diabeticselfed.entities.User;
-import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,11 +41,12 @@ public class AuthenticationService {
   private MailService mailService;
 
   @Transactional
-  public Invitation createInvitation(String email) {
+  public Invitation createInvitation(String email, Role role) {
     Invitation invite = new Invitation();
     invite.setEmail(email);
     invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
     invite.setToken(UUID.randomUUID().toString());
+    invite.setRole(role);
     invite.setUsed(false);
 
     mailService.sendInvitationEmail(invite.getEmail(), invite.getToken());
@@ -70,11 +68,6 @@ public class AuthenticationService {
     var temp = new Patient();
     switch (request.getRole()) {
       case PATIENT:
-
-//        var patient = Patient.builder()
-//                .name(request.getFirstname()+" "+request.getLastname())
-//                .DOB(request.getDob())
-//                .LevelOfEd(request.getLevelofedu());
         Patient patient = new Patient();
         patient.setPatientUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());

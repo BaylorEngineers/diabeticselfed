@@ -1,10 +1,6 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id; // Corrected import for JPA Id
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,4 +22,6 @@ public class Invitation {
     private LocalDateTime expiryDate;
     private boolean used;
     private String token;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 }
