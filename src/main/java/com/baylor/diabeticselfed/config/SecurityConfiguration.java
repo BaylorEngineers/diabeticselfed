@@ -40,9 +40,12 @@ public class SecurityConfiguration {
             "/swagger-ui/**",
             "/webjars/**",
             "/swagger-ui.html",
-            "/api/v1/messages/**",
-            "/ws/**",
-            "/api/v1/forum-posts/**"};
+            "/api/v1/forum-posts/posts/",
+            "/ws/**"};
+
+//     "/api/v1/messages/**",
+//    ,
+//            "/api/v1/forum-posts/**"
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
