@@ -21,7 +21,7 @@ public class ModuleLog {
     @GeneratedValue
     private Integer id;
     private int patientId;
+    private int moduleId;
     private LocalDateTime startT;
     private LocalDateTime endT;
-
 }
