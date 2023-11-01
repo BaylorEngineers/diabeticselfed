@@ -1,9 +1,7 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -20,4 +18,10 @@ public class Module {
     private Integer id;
     private String name;
     private String description;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "content_area_id")
+    @JsonBackReference(value = "modules")
+    private ContentArea contentArea;
+
 }

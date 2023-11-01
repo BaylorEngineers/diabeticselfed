@@ -18,10 +18,11 @@ public class ContentArea {
 
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private Integer id;
 
     private String name;
 
-//    @OneToMany(mappedBy = "ContentArea")
-//    private List<Module> modules;
+    @OneToMany(mappedBy = "contentArea")
+    private List<Module> modules;
 }
