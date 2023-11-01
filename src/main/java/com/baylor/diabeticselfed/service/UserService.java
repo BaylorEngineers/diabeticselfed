@@ -1,14 +1,23 @@
 package com.baylor.diabeticselfed.service;
 
+import com.baylor.diabeticselfed.dto.UserDTO;
+import com.baylor.diabeticselfed.entities.Role;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.user.ChangePasswordRequest;
 import com.baylor.diabeticselfed.entities.User;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,4 +38,32 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         repository.save(user);
     }
+
+    public UserDTO getUserData(String email) {
+        User user = repository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        UserDTO userData = new UserDTO();
+        userData.setFirstName(user.getFirstname());
+        userData.setLastName(user.getLastname());
+
+        return userData;
+    }
+
+    public List<User> getAllClinicians() {
+        return repository.findByRole("CLINICIAN");
+    }
+
+//    public Map<User, List<User>> getCliniciansWithPatients() {
+//        List<User> clinicians = repository.findByRole(String.valueOf(Role.CLINICIAN));
+//        Map<User, List<User>> cliniciansWithPatients = new HashMap<>();
+//
+//        for (User clinician : clinicians) {
+//            List<User> patients = repository.findByRoleAndClinician(Role.CLINICIAN, Role.PATIENT);
+//            cliniciansWithPatients.put(clinician, patients);
+//        }
+//
+//        return cliniciansWithPatients;
+//    }
+
 }
