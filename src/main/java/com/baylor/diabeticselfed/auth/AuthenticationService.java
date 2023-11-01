@@ -73,11 +73,6 @@ public class AuthenticationService {
     var temp = new Patient();
     switch (request.getRole()) {
       case PATIENT:
-
-//        var patient = Patient.builder()
-//                .name(request.getFirstname()+" "+request.getLastname())
-//                .DOB(request.getDob())
-//                .LevelOfEd(request.getLevelofedu());
         Patient patient = new Patient();
         patient.setPatientUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());
@@ -90,11 +85,11 @@ public class AuthenticationService {
       case CLINICIAN:
         Clinician clinician = new Clinician();
         clinician.setClinicianUser(user);
-        clinician.setName(request.getFirstname() + request.getLastname());
+        clinician.setName(request.getFirstname()+" "+request.getLastname());
         clinician.setEmail(request.getEmail());
         clinician.setFirstname(request.getFirstname());
         clinician.setLastname(request.getLastname());
-//        clinicianRepository.save(clinician);
+        clinicianRepository.save(clinician);
         break;
     }
       var jwtToken = jwtService.generateToken(user);
