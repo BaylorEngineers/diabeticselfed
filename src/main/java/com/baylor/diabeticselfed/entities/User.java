@@ -21,6 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "_user")
+//@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
 
@@ -33,6 +34,8 @@ public class User implements UserDetails {
   private String email;
   private String password;
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Comment> userComments;
   @Enumerated(EnumType.STRING)
   private Role role;
 

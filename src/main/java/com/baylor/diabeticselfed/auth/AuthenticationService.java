@@ -76,7 +76,7 @@ public class AuthenticationService {
 //                .DOB(request.getDob())
 //                .LevelOfEd(request.getLevelofedu());
         Patient patient = new Patient();
-        patient.setUser(user);
+        patient.setPatientUser(user);
         patient.setName(request.getFirstname()+" "+request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
@@ -113,7 +113,8 @@ public class AuthenticationService {
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
-    Patient temp = patientRepository.findByUser(user).get();
+    Patient temp = patientRepository.findByPatientUser(user).get();
+//    System.out.println("Login:"+temp);
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
             .refreshToken(refreshToken)

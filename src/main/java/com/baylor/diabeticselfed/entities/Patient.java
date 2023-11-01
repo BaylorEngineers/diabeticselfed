@@ -15,6 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name = "patient")
+//@DiscriminatorValue("PATIENT")
 public class Patient extends User{
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
@@ -39,13 +40,13 @@ public class Patient extends User{
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     @JsonIgnore
-    private User user;
+    private User patientUser;
 
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference(value = "patient-forumpost")
-    @JsonIgnore
-    private List<ForumPost> forumPosts;
+//    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    @JsonManagedReference(value = "patient-forumpost")
+//    @JsonIgnore
+//    private List<ForumPost> forumPosts;
 
 //    public Long getId() {
 //        return id;

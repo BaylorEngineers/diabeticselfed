@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,7 +24,11 @@ public class ForumPost {
 
     private String title;
 
-    @Lob
+    @OneToMany(mappedBy = "forumPost", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Comment> comments;
+
+//    @Lob
+//    @Basic(fetch = FetchType.EAGER)
     private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
