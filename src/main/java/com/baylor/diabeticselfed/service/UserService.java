@@ -7,6 +7,7 @@ import com.baylor.diabeticselfed.user.ChangePasswordRequest;
 import com.baylor.diabeticselfed.entities.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,15 +40,9 @@ public class UserService {
         repository.save(user);
     }
 
-    public UserDTO getUserData(String email) {
-        User user = repository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        UserDTO userData = new UserDTO();
-        userData.setFirstName(user.getFirstname());
-        userData.setLastName(user.getLastname());
-
-        return userData;
+    public User getUserData(Long id) throws ChangeSetPersister.NotFoundException {
+        return repository.findById(id)
+                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
     }
 
     public List<User> getAllClinicians() {

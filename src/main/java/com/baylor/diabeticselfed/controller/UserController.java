@@ -34,9 +34,9 @@ public class UserController {
     }
 
     @GetMapping("/get-user-data")
-    public ResponseEntity<UserDTO> getUserData(@RequestParam String email) {
+    public ResponseEntity<User> getUserData(@RequestParam Long id) {
         try {
-            UserDTO userData = service.getUserData(email);
+            User userData = service.getUserData(id);
 
             return ResponseEntity.ok(userData);
         } catch (Exception e) {
