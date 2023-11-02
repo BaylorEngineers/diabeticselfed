@@ -18,5 +18,4 @@ public class ModuleProgress {
     private int patientId;
     private int moduleId;
     private int completed_percentage;
-
 }

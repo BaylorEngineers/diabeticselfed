@@ -2,6 +2,7 @@ package com.baylor.diabeticselfed;
 
 import com.baylor.diabeticselfed.auth.AuthenticationService;
 import com.baylor.diabeticselfed.auth.RegisterRequest;
+import com.baylor.diabeticselfed.entities.Role;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -42,6 +43,33 @@ public class DiabeticSelfEdApplication {
                     .build();
             System.out.println("Clinician token: " + service.register(clinician).getAccessToken());
 
+//            // Create three patients
+//            var patient1 = RegisterRequest.builder()
+//                    .firstname("Patient1")
+//                    .lastname("Patient1")
+//                    .email("patient1@mail.com")
+//                    .password("password")
+//                    .role(Role.PATIENT)
+//                    .build();
+//            System.out.println("Patient1 built ");
+//
+//            var patient2 = RegisterRequest.builder()
+//                    .firstname("Patient2")
+//                    .lastname("Patient2")
+//                    .email("patient2@mail.com")
+//                    .password("password")
+//                    .role(Role.PATIENT)
+//                    .build();
+//            System.out.println("Patient2 built ");
+//
+//            var patient3 = RegisterRequest.builder()
+//                    .firstname("Patient3")
+//                    .lastname("Patient3")
+//                    .email("patient3@mail.com")
+//                    .password("password")
+//                    .role(Role.PATIENT)
+//                    .build();
+//            System.out.println("Patient3 built ");
         };
     }
 }
