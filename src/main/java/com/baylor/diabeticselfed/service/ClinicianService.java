@@ -19,9 +19,9 @@ public class ClinicianService {
         this.clinicianRepository = clinicianRepository;
     }
 
-    public List<ViewPatientSummary> getViewPatientSummary() {
-        return clinicianRepository.findAll();
-    }
+//    public List<ViewPatientSummary> getViewPatientSummary() {
+////        return clinicianRepository.findAll();
+//    }
 }
 
 

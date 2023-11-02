@@ -38,13 +38,13 @@ public class UserController {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/viewpatientsummary")
+//    @GetMapping("/viewpatientsummary")
 
-    public ResponseEntity<List<ViewPatientSummary>> getAllPatientSummary() {
-        System.out.println("getAllPatientSummary: ");
-        List<ViewPatientSummary> patientSummary = clinicianService.getViewPatientSummary();
-        return ResponseEntity.ok(patientSummary);
-    }
+//    public ResponseEntity<List<ViewPatientSummary>> getAllPatientSummary() {
+//        System.out.println("getAllPatientSummary: ");
+//        List<ViewPatientSummary> patientSummary = clinicianService.getViewPatientSummary();
+//        return ResponseEntity.ok(patientSummary);
+//    }
     @GetMapping("/get-user-data")
     public ResponseEntity<User> getUserData(@RequestParam Long id) {
         try {
