@@ -1,8 +1,7 @@
 package com.baylor.diabeticselfed.auth;
 
 import com.baylor.diabeticselfed.config.JwtService;
-import com.baylor.diabeticselfed.entities.Clinician;
-import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.*;
 import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;

@@ -2,6 +2,8 @@ package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.UserDTO;
 import com.baylor.diabeticselfed.entities.User;
+import com.baylor.diabeticselfed.model.ViewPatientSummary;
+import com.baylor.diabeticselfed.service.ClinicianService;
 import com.baylor.diabeticselfed.user.ChangePasswordRequest;
 import com.baylor.diabeticselfed.service.UserService;
 import jakarta.persistence.EntityNotFoundException;

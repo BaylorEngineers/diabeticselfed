@@ -35,6 +35,7 @@ public class DtoConverter {
         dto.setCommentDate(comment.getCommentDate());
         dto.setCommenterFirstName(comment.getUser().getFirstname());
         dto.setCommenterLastName(comment.getUser().getLastname());
+        dto.setUserId(comment.getUser().getId());
 
         // Convert child comments and set
         List<CommentDTO> childCommentDTOs = comment.getChildComments().stream()
