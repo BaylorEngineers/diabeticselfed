@@ -1,6 +1,7 @@
 package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.UserDTO;
+import com.baylor.diabeticselfed.entities.Clinician;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.model.ViewPatientSummary;
 import com.baylor.diabeticselfed.service.ClinicianService;
@@ -25,8 +26,6 @@ public class UserController {
 
     private final UserService service;
 
-    private final ClinicianService clinicianService;
-
     @RequestMapping("/change-password")
     @PatchMapping
     public ResponseEntity<?> changePassword(
@@ -46,33 +45,8 @@ public class UserController {
 //        return ResponseEntity.ok(patientSummary);
 //    }
     @GetMapping("/get-user-data")
-    public ResponseEntity<User> getUserData(@RequestParam Long id) {
-        try {
-            User userData = service.getUserData(id);
-
-            return ResponseEntity.ok(userData);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public UserDTO getUserData(@RequestParam Integer id) {
+        UserDTO userData = service.getUserData(id);
+        return userData;
     }
-
-    @GetMapping("/clinicians")
-    public ResponseEntity<List<User>> getAllClinicians() {
-        try {
-            List<User> clinicians = service.getAllClinicians();
-            return ResponseEntity.ok(clinicians);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).build();
-        }
-    }
-
-//    @GetMapping("/clinicians-with-patients")
-//    public ResponseEntity<Map<User, List<User>>> getCliniciansWithPatients() {
-//        try {
-//            Map<User, List<User>> cliniciansWithPatients = service.getCliniciansWithPatients();
-//            return ResponseEntity.ok(cliniciansWithPatients);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
 }

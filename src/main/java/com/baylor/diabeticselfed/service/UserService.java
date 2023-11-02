@@ -1,24 +1,17 @@
 package com.baylor.diabeticselfed.service;
 
 import com.baylor.diabeticselfed.dto.UserDTO;
-import com.baylor.diabeticselfed.entities.Role;
+import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.user.ChangePasswordRequest;
 import com.baylor.diabeticselfed.entities.User;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +19,8 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository repository;
+
+    private final ClinicianRepository clinicianRepository;
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
@@ -40,25 +35,14 @@ public class UserService {
         repository.save(user);
     }
 
-    public User getUserData(Long id) throws ChangeSetPersister.NotFoundException {
-        return repository.findById(id)
-                .orElseThrow(() -> new ChangeSetPersister.NotFoundException());
+    public UserDTO getUserData(Integer id) {
+        User user = repository.findById(id).get();
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setFirstName(user.getFirstname());
+        userDTO.setLastName(user.getLastname());
+        userDTO.setEmail(user.getEmail());
+        return userDTO;
     }
-
-    public List<User> getAllClinicians() {
-        return repository.findByRole("CLINICIAN");
-    }
-
-//    public Map<User, List<User>> getCliniciansWithPatients() {
-//        List<User> clinicians = repository.findByRole(String.valueOf(Role.CLINICIAN));
-//        Map<User, List<User>> cliniciansWithPatients = new HashMap<>();
-//
-//        for (User clinician : clinicians) {
-//            List<User> patients = repository.findByRoleAndClinician(Role.CLINICIAN, Role.PATIENT);
-//            cliniciansWithPatients.put(clinician, patients);
-//        }
-//
-//        return cliniciansWithPatients;
-//    }
 
 }
