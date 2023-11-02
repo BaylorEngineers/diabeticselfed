@@ -14,6 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,13 +46,26 @@ public class MessageService {
         User sender = userRepository.findById(senderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No such user found"));
 
         List<Integer> receiverIds = messageRepository.findDistinctReceiverIdsBySenderId(senderId);
+        System.out.println("receiverIds:" + receiverIds);
+        List<Integer> senderIds = messageRepository.findDistinctSenderIdsByReceiverId(senderId);
+        System.out.println("senderIds:" + senderIds);
         List<LastMessageDTO> lastMessagesDTOs = new ArrayList<>();
-
-        for (Integer receiverId : receiverIds) {
+        List<Integer> uniqueIdsList = Stream.concat(receiverIds.stream(), senderIds.stream())
+                .distinct()
+                .collect(Collectors.toList());
+        for (Integer receiverId : uniqueIdsList) {
             User receiver = userRepository.findById(receiverId).orElse(null); // Fetch the full receiver details
             if (receiver != null) {
+                System.out.println("receiver found");
                 List<Message> conversation = getMessagesBetweenUsers(sender, receiver);
+                List<Message> conversation1 = getMessagesBetweenUsers(receiver,sender );
+                for (Message message: conversation1
+                     ) {
+                    conversation.add(message);
+                }
+
                 if (!conversation.isEmpty()) {
+                    System.out.println("conversation found");
                     Message lastMessage = conversation.get(conversation.size() - 1);
 
                     LastMessageDTO dto = new LastMessageDTO();

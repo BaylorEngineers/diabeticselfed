@@ -17,6 +17,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @RestController
@@ -58,9 +61,14 @@ public class MessageController {
             }
 
             Message sentMessage = messageService.sendMessage(sender, receiver, messageDTO.getContent());
+            messageDTO.setReceiverName(sentMessage.getReceiver().getFirstname() + " " + sentMessage.getReceiver().getLastname());
+            messageDTO.setSenderName(sentMessage.getSender().getFirstname() + " " + sentMessage.getSender().getLastname());
+            messageDTO.setTime(sentMessage.getTimestamp());
+            messageDTO.setSenderId(sentMessage.getSender().getId());
+            messageDTO.setReceiverId(sentMessage.getReceiver().getId());
             System.out.println("Send");
             // Notify WebSocket subscribers about the new message
-            messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), sentMessage);
+            messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), messageDTO);
             System.out.println("Send finish");
             return new ResponseEntity<>(sentMessage, HttpStatus.OK);
         } catch (ResponseStatusException e) {
@@ -85,10 +93,42 @@ public class MessageController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/conversation")
-    public List<Message> getMessagesBetweenUsers(@RequestParam Integer userId1,
+    public List<MessageDTO> getMessagesBetweenUsers(@RequestParam Integer userId1,
                                                  @RequestParam Integer userId2) {
         User user1 = userRepository.findById(userId1).orElseThrow();
         User user2 = userRepository.findById(userId2).orElseThrow();
-        return messageService.getMessagesBetweenUsers(user1, user2);
+        List<Message> messageList = messageService.getMessagesBetweenUsers(user1, user2);
+        List<MessageDTO> messageDTOList = new ArrayList<>();
+        for (Message message:messageList
+             ) {
+            MessageDTO newMessaage = new MessageDTO();
+            newMessaage.setTime(message.getTimestamp());
+            newMessaage.setContent(message.getContent());
+            newMessaage.setSenderId(message.getSender().getId());
+            newMessaage.setReceiverId(message.getReceiver().getId());
+            messageDTOList.add(newMessaage);
+        }
+        messageList = messageService.getMessagesBetweenUsers(user2, user1);
+        for (Message message:messageList
+        ) {
+            MessageDTO newMessaage = new MessageDTO();
+            newMessaage.setTime(message.getTimestamp());
+            newMessaage.setContent(message.getContent());
+            newMessaage.setSenderId(message.getSender().getId());
+            newMessaage.setReceiverId(message.getReceiver().getId());
+            newMessaage.setSenderName(message.getSender().getFirstname() + " " + message.getSender().getLastname());
+            newMessaage.setReceiverName(message.getReceiver().getFirstname() + " " + message.getReceiver().getLastname());
+            messageDTOList.add(newMessaage);
+
+        }
+        Collections.sort(messageDTOList, new Comparator<MessageDTO>() {
+            @Override
+            public int compare(MessageDTO m1, MessageDTO m2) {
+                return m1.getTime().compareTo(m2.getTime());
+            }
+        });
+        messageDTOList.sort(Comparator.comparing(MessageDTO::getTime));
+
+        return messageDTOList;
     }
 }
