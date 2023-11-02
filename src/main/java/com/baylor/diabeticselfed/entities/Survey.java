@@ -1,12 +1,12 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,8 +20,18 @@ public class Survey {
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
-    private LocalDateTime date;
-    private int questionId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    @JsonIgnore
+    private Patient patient;
+
+    private Date dateT;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "question_id")
+    @JsonIgnore
+    private Question question;
+
     private boolean answer;
 }
