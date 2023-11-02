@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.SimpleTimeZone;
 
 @Data
 @Builder
@@ -22,4 +23,5 @@ public class RegisterRequest {
   private Role role;
   private Date dob;
   private Patient.EducationLevel levelofedu;
+  private String token;
 }

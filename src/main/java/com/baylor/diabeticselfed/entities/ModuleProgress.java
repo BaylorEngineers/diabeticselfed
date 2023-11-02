@@ -15,7 +15,6 @@ public class ModuleProgress {
     @Id
     @GeneratedValue
     private Integer id;
-
     private int patientId;
     private int moduleId;
     private int completed_percentage;
