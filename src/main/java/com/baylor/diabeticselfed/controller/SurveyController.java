@@ -4,9 +4,9 @@ import com.baylor.diabeticselfed.dto.SurveyDTO;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.Question;
 import com.baylor.diabeticselfed.entities.Survey;
-import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.repository.QuestionRepository;
+import com.baylor.diabeticselfed.service.SurveyResponseService;
 import com.baylor.diabeticselfed.service.SurveyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +26,7 @@ import java.util.Locale;
 public class SurveyController {
 
     private final SurveyService surveyService;
+    private final SurveyResponseService surveyResponseService;
 
     @Autowired
     private PatientRepository patientRepository;
@@ -44,6 +45,8 @@ public class SurveyController {
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+
+            surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
 
             Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 

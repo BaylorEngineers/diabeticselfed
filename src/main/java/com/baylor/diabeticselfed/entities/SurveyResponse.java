@@ -22,6 +22,5 @@ public class SurveyResponse {
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
-    private boolean submitted;
     private Date dateT;
 }
