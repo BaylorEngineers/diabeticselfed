@@ -2,6 +2,7 @@ package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.WeightTrackerReportDTO;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.entities.WeightTracker;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.WeightTrackerService;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -55,6 +57,12 @@ public class WeightTrackerController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @GetMapping("/fetchReport/{patientId}")
+    public List<WeightTracker> fetchReportByPatientId(@PathVariable Integer patientId) {
+
+        return weightTrackerService.getReportByPatientId(patientId);
     }
 
 }
