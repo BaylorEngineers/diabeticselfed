@@ -2,6 +2,8 @@ package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.UserDTO;
 import com.baylor.diabeticselfed.entities.User;
+import com.baylor.diabeticselfed.model.ViewPatientSummary;
+import com.baylor.diabeticselfed.service.ClinicianService;
 import com.baylor.diabeticselfed.user.ChangePasswordRequest;
 import com.baylor.diabeticselfed.service.UserService;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +25,8 @@ public class UserController {
 
     private final UserService service;
 
+    private final ClinicianService clinicianService;
+
     @RequestMapping("/change-password")
     @PatchMapping
     public ResponseEntity<?> changePassword(
@@ -33,6 +37,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/viewpatientsummary")
+
+    public ResponseEntity<List<ViewPatientSummary>> getAllPatientSummary() {
+        List<ViewPatientSummary> patientSummary = clinicianService.getViewPatientSummary();
+        return ResponseEntity.ok(patientSummary);
+    }
     @GetMapping("/get-user-data")
     public ResponseEntity<User> getUserData(@RequestParam Long id) {
         try {

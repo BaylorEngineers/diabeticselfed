@@ -1,4 +1,4 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.model;
 
 import com.baylor.diabeticselfed.dto.CommentDTO;
 import com.baylor.diabeticselfed.dto.newForumPostDTO;
@@ -35,6 +35,7 @@ public class DtoConverter {
         dto.setCommentDate(comment.getCommentDate());
         dto.setCommenterFirstName(comment.getUser().getFirstname());
         dto.setCommenterLastName(comment.getUser().getLastname());
+        dto.setUserId(comment.getUser().getId());
 
         // Convert child comments and set
         List<CommentDTO> childCommentDTOs = comment.getChildComments().stream()

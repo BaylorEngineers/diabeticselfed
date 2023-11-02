@@ -13,7 +13,7 @@ import com.baylor.diabeticselfed.repository.ForumPostRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.service.ForumPostService;
-import com.baylor.diabeticselfed.user.DtoConverter;
+import com.baylor.diabeticselfed.model.DtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
