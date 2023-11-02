@@ -42,6 +42,7 @@ public class AuthenticationController {
       System.out.println("Email is already registered");
       return new ResponseEntity<>("Email is already registered", HttpStatus.BAD_REQUEST);
     }
+    System.out.println("Data " + Role.valueOf(invitationDto.getRole()));
     Invitation invitation = service.createInvitation(invitationDto.getEmail(), Role.valueOf(invitationDto.getRole()));
     return new ResponseEntity<>(invitation, HttpStatus.CREATED);
   }
