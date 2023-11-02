@@ -1,4 +1,4 @@
-package com.baylor.diabeticselfed.user;
+package com.baylor.diabeticselfed.model;
 
 import com.baylor.diabeticselfed.dto.CommentDTO;
 import com.baylor.diabeticselfed.dto.newForumPostDTO;
