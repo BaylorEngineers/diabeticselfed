@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -48,10 +49,30 @@ public class ModuleProgressController {
         }
     }
 
-    @PatchMapping("/update/{patientId}/{moduleId}")
+    @PatchMapping("/update/{patientId}/{moduleId}/{percentage}")
     public ResponseEntity<?> updateModuleProgress(@PathVariable Integer patientId,
-                                                  @PathVariable Integer moduleId) {
-        
+                                                  @PathVariable Integer moduleId,
+                                                  @PathVariable Integer percentage) {
+
+        try {
+
+            Patient p = patientRepository.findById(patientId)
+                    .orElseThrow();
+            Module m = moduleRepository.findById(moduleId)
+                    .orElseThrow();
+
+            ModuleProgress mp = moduleProgressService.findByPatientAndModule(p, m)
+                    .orElseThrow();
+
+            ModuleProgress mp_new = moduleProgressService.updateModuleProgress(mp, percentage);
+
+            return new ResponseEntity<>(mp_new, HttpStatus.OK);
+
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }

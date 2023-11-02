@@ -2,6 +2,7 @@ package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.service.ModuleService;
 import com.baylor.diabeticselfed.entities.Module;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/modules")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequiredArgsConstructor
 public class ModuleController {
 
     @Autowired
@@ -22,7 +25,7 @@ public class ModuleController {
 
         try {
             if (moduleService.findModuleByName(module.getName()).isPresent()) {
-                return new ResponseEntity<>("Module already exists", HttpStatus.FORBIDDEN)
+                return new ResponseEntity<>("Module already exists", HttpStatus.FORBIDDEN);
             }
             else {
                 Module createdModule = moduleService.createModule(module.getContentArea().getId(),
