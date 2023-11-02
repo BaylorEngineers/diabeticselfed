@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -17,7 +18,11 @@ public class MotivationalMessage {
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
-    private LocalDateTime date;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
+    private Date dateT;
     private String message_content;
 }
