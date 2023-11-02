@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ModuleService {
@@ -37,7 +38,19 @@ public class ModuleService {
         return moduleRepository.save(module);
     }
 
-    public Module createOrUpdateModule(Module module) {
+    public Optional<Module> findModuleByName(String name) {
+        return moduleRepository.findByName(name);
+    }
+
+    public Module createModule(Integer contentAreaId, String name, String description, String filePath) {
+        Module module = new Module();
+        module.setName(name);
+        module.setDescription(description);
+        module.setFilePath(filePath);
+        ContentArea contentArea = contentAreaRepository.findById(contentAreaId)
+                .orElseThrow(() -> new EntityNotFoundException("Content Area not found"));
+        module.setContentArea(contentArea);
+
         return moduleRepository.save(module);
     }
 
