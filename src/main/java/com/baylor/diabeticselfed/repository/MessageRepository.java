@@ -13,4 +13,7 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     @Query("SELECT DISTINCT m.receiver.id FROM Message m WHERE m.sender.id = ?1")
     List<Integer> findDistinctReceiverIdsBySenderId(Integer senderId);
+
+    @Query("SELECT DISTINCT m.sender.id FROM Message m WHERE m.receiver.id = ?1")
+    List<Integer> findDistinctSenderIdsByReceiverId(Integer receiverId);
 }
