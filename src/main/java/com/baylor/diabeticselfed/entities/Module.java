@@ -24,4 +24,6 @@ public class Module {
     @JsonBackReference(value = "modules")
     private ContentArea contentArea;
 
+    private String filePath;
+
 }
