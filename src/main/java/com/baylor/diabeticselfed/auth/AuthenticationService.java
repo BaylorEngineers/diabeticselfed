@@ -1,13 +1,17 @@
 package com.baylor.diabeticselfed.auth;
 
 import com.baylor.diabeticselfed.config.JwtService;
-import com.baylor.diabeticselfed.entities.*;
+import com.baylor.diabeticselfed.entities.Clinician;
+import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.MailService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
+import com.baylor.diabeticselfed.entities.User;
+import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,6 +34,8 @@ import java.util.UUID;
 public class AuthenticationService {
   private final UserRepository repository;
   private final PatientRepository patientRepository;
+
+  private final ClinicianRepository clinicianRepository;
   @Autowired
   private InvitationRepository invitationRepository;
 
@@ -41,12 +47,11 @@ public class AuthenticationService {
   private MailService mailService;
 
   @Transactional
-  public Invitation createInvitation(String email, Role role) {
+  public Invitation createInvitation(String email) {
     Invitation invite = new Invitation();
     invite.setEmail(email);
     invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
     invite.setToken(UUID.randomUUID().toString());
-    invite.setRole(role);
     invite.setUsed(false);
 
     mailService.sendInvitationEmail(invite.getEmail(), invite.getToken());
@@ -70,7 +75,7 @@ public class AuthenticationService {
       case PATIENT:
         Patient patient = new Patient();
         patient.setPatientUser(user);
-        patient.setName(request.getFirstname() + " " + request.getLastname());
+        patient.setName(request.getFirstname()+" "+request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
         patient.setEmail(request.getEmail());
@@ -79,7 +84,12 @@ public class AuthenticationService {
         break;
       case CLINICIAN:
         Clinician clinician = new Clinician();
-//        clinician.setUser(user);
+        clinician.setClinicianUser(user);
+        clinician.setName(request.getFirstname()+" "+request.getLastname());
+        clinician.setEmail(request.getEmail());
+        clinician.setFirstname(request.getFirstname());
+        clinician.setLastname(request.getLastname());
+        clinicianRepository.save(clinician);
         break;
     }
       var jwtToken = jwtService.generateToken(user);
