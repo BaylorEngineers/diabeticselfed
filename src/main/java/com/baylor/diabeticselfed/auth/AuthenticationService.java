@@ -50,6 +50,8 @@ public class AuthenticationService {
     invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
     invite.setToken(UUID.randomUUID().toString());
     invite.setUsed(false);
+    invite.setRole(role);
+
 
     mailService.sendInvitationEmail(invite.getEmail(), invite.getToken());
 
