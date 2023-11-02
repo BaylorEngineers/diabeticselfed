@@ -1,12 +1,10 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,8 +18,19 @@ public class ModuleLog {
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
-    private int moduleId;
-    private LocalDateTime startT;
-    private LocalDateTime endT;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "module_id")
+    private Module module;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "module_progress_id")
+    private ModuleProgress moduleProgress;
+
+    private Date startT;
+    private Date endT;
 }
