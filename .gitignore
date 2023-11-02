@@ -63,3 +63,4 @@ build/
 
 # Ignore database configurations
 src/main/resources/application.yml
+src/main/resources/application.properties
