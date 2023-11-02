@@ -41,6 +41,7 @@ public class UserController {
     @GetMapping("/viewpatientsummary")
 
     public ResponseEntity<List<ViewPatientSummary>> getAllPatientSummary() {
+        System.out.println("getAllPatientSummary: ");
         List<ViewPatientSummary> patientSummary = clinicianService.getViewPatientSummary();
         return ResponseEntity.ok(patientSummary);
     }
