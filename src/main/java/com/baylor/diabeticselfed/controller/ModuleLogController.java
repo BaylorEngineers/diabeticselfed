@@ -31,17 +31,17 @@ public class ModuleLogController {
     @Autowired
     private ModuleRepository moduleRepository;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createModuleLog(@RequestBody ModuleLogDTO moduleLogDTO) {
-
-        try {
-
-            
-
-        } catch (ResponseStatusException e) {
-            return new ResponseEntity<>(null, e.getStatusCode());
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<?> createModuleLog(@RequestBody ModuleLogDTO moduleLogDTO) {
+//
+//        try {
+//
+//
+//
+//        } catch (ResponseStatusException e) {
+//            return new ResponseEntity<>(null, e.getStatusCode());
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }
