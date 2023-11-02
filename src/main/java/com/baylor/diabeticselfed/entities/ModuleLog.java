@@ -31,6 +31,6 @@ public class ModuleLog {
     @JoinColumn(name = "module_progress_id")
     private ModuleProgress moduleProgress;
 
-    private Date startT;
-    private Date endT;
+    private LocalDateTime startT;
+    private LocalDateTime endT;
 }
