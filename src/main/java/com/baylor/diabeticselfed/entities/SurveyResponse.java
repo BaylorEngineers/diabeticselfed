@@ -1,13 +1,16 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "survey_response")
 public class SurveyResponse {
 
@@ -15,18 +18,10 @@ public class SurveyResponse {
     @GeneratedValue
     private Integer id;
 
-    private int patientId;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
     private boolean submitted;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public int getPatientId() { return patientId; }
-
-    public void setPatientId(int patientId) { this.patientId = patientId; }
-
-    public boolean isSubmitted() { return submitted; }
-
-    public void setSubmitted(boolean submitted) { this.submitted = submitted; }
+    private Date dateT;
 }

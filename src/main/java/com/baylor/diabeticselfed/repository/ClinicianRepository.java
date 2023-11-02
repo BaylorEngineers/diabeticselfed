@@ -18,4 +18,7 @@ public interface ClinicianRepository extends JpaRepository<Clinician, Long> {
     @Query("SELECT v FROM ViewPatientSummary v")
     List<ViewPatientSummary> findAllPatientSummary();
 
+    @Query("SELECT v FROM ViewPatientSummary v")
+    List<ViewPatientSummary> findAllPatientSummary();
+
 }
