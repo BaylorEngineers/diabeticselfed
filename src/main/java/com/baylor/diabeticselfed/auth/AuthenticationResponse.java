@@ -23,5 +23,7 @@ public class AuthenticationResponse {
   private Integer userID;
   @JsonProperty("patientID")
   private Integer patientID;
+  @JsonProperty("clinicianID")
+  private Integer clinicianID;
 
 }
