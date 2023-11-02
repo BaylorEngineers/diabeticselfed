@@ -1,8 +1,7 @@
 package com.baylor.diabeticselfed.auth;
 
 import com.baylor.diabeticselfed.config.JwtService;
-import com.baylor.diabeticselfed.entities.Clinician;
-import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.*;
 import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
@@ -10,8 +9,6 @@ import com.baylor.diabeticselfed.service.MailService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
-import com.baylor.diabeticselfed.entities.User;
-import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +44,7 @@ public class AuthenticationService {
   private MailService mailService;
 
   @Transactional
-  public Invitation createInvitation(String email) {
+  public Invitation createInvitation(String email, Role role) {
     Invitation invite = new Invitation();
     invite.setEmail(email);
     invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
