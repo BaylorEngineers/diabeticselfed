@@ -69,7 +69,8 @@ public class AuthenticationService {
             .build();
 
     var savedUser = repository.save(user);
-    var temp = new Patient();
+    var patient1 = new Patient();
+    Clinician clinician = new Clinician();
     switch (request.getRole()) {
       case PATIENT:
         Patient patient = new Patient();
@@ -78,11 +79,12 @@ public class AuthenticationService {
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
         patient.setEmail(request.getEmail());
-        temp = patientRepository.save(patient);
-        System.out.println(temp);
+        patient1 = patientRepository.save(patient);
+        System.out.println(patient1);
         break;
+
       case CLINICIAN:
-        Clinician clinician = new Clinician();
+
         clinician.setClinicianUser(user);
         clinician.setName(request.getFirstname()+" "+request.getLastname());
         clinician.setEmail(request.getEmail());
@@ -98,31 +100,42 @@ public class AuthenticationService {
               .accessToken(jwtToken)
               .refreshToken(refreshToken)
               .userID(user.getId())
-              .patientID(temp.getId())
+              .patientID(patient1.getId())
+              .clinicianID(clinician.getId())
               .build();
   }
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    System.out.println("Come for login");
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()
         )
     );
+    System.out.println("Come for Check User");
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
+    System.out.println("Get Token for user:" + user.getId());
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
-    Patient temp = patientRepository.findByPatientUser(user).get();
+//    System.out.println(user);
+    Patient patient = new Patient();
+    if(user.getRole() == Role.PATIENT)
+      patient = patientRepository.findByPatientUser(user).get();
 //    System.out.println("Login:"+temp);
+    Clinician clinician = new Clinician();
+    if(user.getRole()==Role.CLINICIAN)
+      clinician = clinicianRepository.findByClinicianUser(user).get();
     return AuthenticationResponse.builder()
         .accessToken(jwtToken)
             .refreshToken(refreshToken)
             .role(user.getRole())
             .userID(user.getId())
-            .patientID(temp.getId())
+            .patientID(patient.getId())
+            .clinicianID(clinician.getId())
         .build();
   }
 
