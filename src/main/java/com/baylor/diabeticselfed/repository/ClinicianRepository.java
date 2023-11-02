@@ -15,8 +15,8 @@ public interface ClinicianRepository extends JpaRepository<Clinician, Long> {
     Optional<Clinician> findByEmail(String email);
     Optional<Clinician> findByClinicianUser(User user);
     Optional<Clinician> findById(Long id);
-
     @Query("SELECT v FROM ViewPatientSummary v")
     List<ViewPatientSummary> findAllPatientSummary();
+
 
 }

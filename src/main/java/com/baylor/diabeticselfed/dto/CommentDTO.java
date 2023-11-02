@@ -12,5 +12,6 @@ public class CommentDTO {
     private Date commentDate;
     private String commenterFirstName;
     private String commenterLastName;
+    private Integer userId;
     private List<CommentDTO> childComments; // for nested comments
 }
