@@ -9,6 +9,8 @@ import com.baylor.diabeticselfed.service.MailService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
+import com.baylor.diabeticselfed.entities.User;
+import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,12 +46,11 @@ public class AuthenticationService {
   private MailService mailService;
 
   @Transactional
-  public Invitation createInvitation(String email, Role role) {
+  public Invitation createInvitation(String email) {
     Invitation invite = new Invitation();
     invite.setEmail(email);
     invite.setExpiryDate(LocalDateTime.now().plusDays(7)); // 7 days validity
     invite.setToken(UUID.randomUUID().toString());
-    invite.setRole(role);
     invite.setUsed(false);
 
     mailService.sendInvitationEmail(invite.getEmail(), invite.getToken());
@@ -73,7 +74,7 @@ public class AuthenticationService {
       case PATIENT:
         Patient patient = new Patient();
         patient.setPatientUser(user);
-        patient.setName(request.getFirstname() + " " + request.getLastname());
+        patient.setName(request.getFirstname()+" "+request.getLastname());
         patient.setDOB(request.getDob());
         patient.setLevelOfEd(request.getLevelofedu());
         patient.setEmail(request.getEmail());
