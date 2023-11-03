@@ -1,6 +1,7 @@
 package com.baylor.diabeticselfed.controller;
 
 import com.baylor.diabeticselfed.dto.GoalDTO;
+import com.baylor.diabeticselfed.entities.Goal;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.GoalService;
@@ -28,11 +29,16 @@ public class GoalController {
             Patient patient = patientRepository.findById(goalDTO.getPatientId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
 
-            goalService.setGoal(patient, goalDTO.getWeightLossPercent());
+            if (goalService.findGoalByPatient(patient).isEmpty()) {
+                goalService.setGoal(patient, goalDTO.getWeightLossPercent());
 
-            System.out.println("Goal Created!");
+                System.out.println("Goal Created!");
 
-            return new ResponseEntity<>(null, HttpStatus.OK);
+                return new ResponseEntity<>(null, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("User goal already exists", HttpStatus.FORBIDDEN);
+            }
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
@@ -41,5 +47,31 @@ public class GoalController {
         }
     }
 
+    @PatchMapping("/updateGoal")
+    public ResponseEntity<?> updateGoal(@RequestBody GoalDTO goalDTO) {
+        try {
+            Patient patient = patientRepository.findById(goalDTO.getPatientId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
+
+            if (goalService.findGoalByPatient(patient).isPresent()) {
+                Goal goal = goalService.retrieveGoalByPatient(patient);
+
+                goal.setWeightLossPercent(goalDTO.getWeightLossPercent());
+
+                goalService.updateGoal(goal);
+
+                return new ResponseEntity<>(goal, HttpStatus.OK);
+
+            }
+            else {
+                return new ResponseEntity<>("User goal does NOT exist", HttpStatus.FORBIDDEN);
+            }
+
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
