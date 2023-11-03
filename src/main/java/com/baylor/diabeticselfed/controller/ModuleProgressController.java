@@ -3,6 +3,7 @@ package com.baylor.diabeticselfed.controller;
 import com.baylor.diabeticselfed.entities.Module;
 import com.baylor.diabeticselfed.entities.ModuleProgress;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.ModuleRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.ModuleProgressService;
@@ -10,10 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -32,10 +35,12 @@ public class ModuleProgressController {
 
     @PostMapping("/create/{patientId}/{moduleId}")
     public ResponseEntity<?> createModuleProgress(@PathVariable Integer patientId,
-                                                  @PathVariable Integer moduleId) {
+                                                  @PathVariable Integer moduleId,
+                                                  Principal connectedUser) {
         try {
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-            Patient p = patientRepository.findById(patientId)
+            Patient p = patientRepository.findByPatientUser(user)
                     .orElseThrow();
             Module m = moduleRepository.findById(moduleId)
                     .orElseThrow();
@@ -59,11 +64,13 @@ public class ModuleProgressController {
     @PatchMapping("/update/{patientId}/{moduleId}/{percentage}")
     public ResponseEntity<?> updateModuleProgress(@PathVariable Integer patientId,
                                                   @PathVariable Integer moduleId,
-                                                  @PathVariable Integer percentage) {
+                                                  @PathVariable Integer percentage,
+                                                  Principal connectedUser) {
 
         try {
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
-            Patient p = patientRepository.findById(patientId)
+            Patient p = patientRepository.findByPatientUser(user)
                     .orElseThrow();
             Module m = moduleRepository.findById(moduleId)
                     .orElseThrow();
@@ -83,8 +90,10 @@ public class ModuleProgressController {
     }
 
     @GetMapping("/get/{patientId}")
-    public List<ModuleProgress> getModuleProgressByPatientId(@PathVariable Integer patientId) {
-        Patient p = patientRepository.findById(patientId)
+    public List<ModuleProgress> getModuleProgressByPatientId(@PathVariable Integer patientId, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+
+        Patient p = patientRepository.findByPatientUser(user)
                 .orElseThrow();
         return moduleProgressService.findByPatient(p);
     }

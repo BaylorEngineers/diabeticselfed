@@ -3,14 +3,18 @@ package com.baylor.diabeticselfed.controller;
 import com.baylor.diabeticselfed.dto.GoalDTO;
 import com.baylor.diabeticselfed.entities.Goal;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.GoalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/v1/goals")
@@ -24,9 +28,10 @@ public class GoalController {
     private PatientRepository patientRepository;
 
     @PostMapping("/setGoal")
-    public ResponseEntity<?> setGoal(@RequestBody GoalDTO goalDTO) {
+    public ResponseEntity<?> setGoal(@RequestBody GoalDTO goalDTO, Principal connectedUser) {
         try {
-            Patient patient = patientRepository.findById(goalDTO.getPatientId())
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            Patient patient = patientRepository.findByPatientUser(user)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
 
             if (goalService.findGoalByPatient(patient).isEmpty()) {
@@ -48,9 +53,10 @@ public class GoalController {
     }
 
     @PatchMapping("/updateGoal")
-    public ResponseEntity<?> updateGoal(@RequestBody GoalDTO goalDTO) {
+    public ResponseEntity<?> updateGoal(@RequestBody GoalDTO goalDTO, Principal connectedUser) {
         try {
-            Patient patient = patientRepository.findById(goalDTO.getPatientId())
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            Patient patient = patientRepository.findByPatientUser(user)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
 
             if (goalService.findGoalByPatient(patient).isPresent()) {
