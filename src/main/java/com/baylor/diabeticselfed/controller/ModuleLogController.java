@@ -19,10 +19,11 @@ import org.springframework.web.server.ResponseStatusException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
-@RequestMapping("/api/modules/log")
+@RequestMapping("/api/v1/modules/log")
 @CrossOrigin(origins = "http://localhost:3000")
 @RequiredArgsConstructor
 public class ModuleLogController {
@@ -55,14 +56,45 @@ public class ModuleLogController {
             LocalDateTime start = LocalDateTime.parse(moduleLogDTO.getStartT(), formatter);
             LocalDateTime end = LocalDateTime.parse(moduleLogDTO.getEndT(), formatter);
 
-            ModuleLog ml = moduleLogService.createModuleLog(p, m, mp, start, end);
+//            ModuleLog ml = moduleLogService.createModuleLog(p, m, mp, start, end);
+//
+//            return new ResponseEntity<>(ml, HttpStatus.OK);
 
-            return new ResponseEntity<>(ml, HttpStatus.OK);
+
+            if (moduleLogService.findOverlap(p, start, end).isEmpty()) {
+                ModuleLog ml = moduleLogService.createModuleLog(p, m, mp, start, end);
+
+                return new ResponseEntity<>(ml, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("This time slot is overlapping with existing time", HttpStatus.IM_USED);
+            }
+
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
         } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.err.println(e.fillInStackTrace());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/get/{patientId}")
+    public List<ModuleLog> getAllModuleLogByPatientId(@PathVariable Integer patientId) {
+        Patient p = patientRepository.findById(patientId)
+                .orElseThrow();
+
+        return moduleLogService.getModuleLogByPatient(p);
+    }
+
+    @GetMapping("/get/{patientId}/{moduleId}")
+    public List<ModuleLog> getModuleLogByPatientIdAndModuleId(@PathVariable Integer patientId, @PathVariable Integer moduleId) {
+        Patient p = patientRepository.findById(patientId)
+                .orElseThrow();
+        Module m = moduleRepository.findById(moduleId)
+                .orElseThrow();
+
+        return moduleLogService.getModuleLogByPatientAndModule(p, m);
     }
 }

@@ -7,6 +7,7 @@ import com.baylor.diabeticselfed.repository.ModuleProgressRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,10 @@ public class ModuleProgressService {
 
     public Optional<ModuleProgress> findByPatientAndModule(Patient patient, Module module) {
         return moduleProgressRepository.findByPatientAndAndModule(patient, module);
+    }
+
+    public List<ModuleProgress> findByPatient(Patient patient) {
+        return moduleProgressRepository.findByPatient(patient);
     }
 
 }

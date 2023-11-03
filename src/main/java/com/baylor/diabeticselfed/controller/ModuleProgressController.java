@@ -14,6 +14,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/modules/progress")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -38,9 +40,14 @@ public class ModuleProgressController {
             Module m = moduleRepository.findById(moduleId)
                     .orElseThrow();
 
-            ModuleProgress mp = moduleProgressService.createModuleProgess(p, m, 0);
+            if (moduleProgressService.findByPatientAndModule(p, m).isEmpty()) {
+                ModuleProgress mp = moduleProgressService.createModuleProgess(p, m, 0);
 
-            return new ResponseEntity<>(mp, HttpStatus.OK);
+                return new ResponseEntity<>(mp, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("This module progress entry already exists", HttpStatus.FORBIDDEN);
+            }
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
@@ -73,6 +80,13 @@ public class ModuleProgressController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/get/{patientId}")
+    public List<ModuleProgress> getModuleProgressByPatientId(@PathVariable Integer patientId) {
+        Patient p = patientRepository.findById(patientId)
+                .orElseThrow();
+        return moduleProgressService.findByPatient(p);
     }
 
 }

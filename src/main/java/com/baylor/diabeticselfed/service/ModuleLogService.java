@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,18 @@ public class ModuleLogService {
         ml.setEndT(endT);
 
         return moduleLogRepository.save(ml);
+    }
+
+    public List<ModuleLog> getModuleLogByPatient(Patient patient) {
+        return moduleLogRepository.findByPatient(patient);
+    }
+
+    public List<ModuleLog> getModuleLogByPatientAndModule(Patient patient, Module module) {
+        return moduleLogRepository.findByPatientAndAndModule(patient, module);
+    }
+
+    public List<ModuleLog> findOverlap(Patient p, LocalDateTime startT, LocalDateTime endT) {
+        return moduleLogRepository.findOverlap(p, startT, endT);
     }
 
 }
