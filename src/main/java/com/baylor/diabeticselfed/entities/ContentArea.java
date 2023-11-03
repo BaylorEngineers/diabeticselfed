@@ -19,7 +19,7 @@ public class ContentArea {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     private String name;
 

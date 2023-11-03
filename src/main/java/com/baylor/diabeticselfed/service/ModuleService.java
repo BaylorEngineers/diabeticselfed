@@ -42,7 +42,7 @@ public class ModuleService {
         return moduleRepository.findByName(name);
     }
 
-    public Module createModule(Integer contentAreaId, String name, String description, String filePath) {
+    public Module createModule(Long contentAreaId, String name, String description, String filePath) {
         Module module = new Module();
         module.setName(name);
         module.setDescription(description);
