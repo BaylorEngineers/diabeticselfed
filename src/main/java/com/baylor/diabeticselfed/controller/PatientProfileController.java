@@ -10,8 +10,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.security.Principal;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/patient-profile")
@@ -23,11 +27,22 @@ public class PatientProfileController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/submit")
-    public ResponseEntity<?> updatePatient(@RequestBody PatientProfileDTO patientProfileDTO) {
+    public ResponseEntity<?> updatePatient(@RequestBody PatientProfileDTO patientProfileDTO, Principal connectedUser) {
         try {
-            patientService.updatePatient(patientProfileDTO.getPatientId(), patientProfileDTO);
 
-            return new ResponseEntity<>(patientProfileDTO, HttpStatus.OK);
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            var patient = patientService.findByUser(user)
+                    .orElseThrow();
+
+            if (Objects.equals(patient.getId(), patientProfileDTO.getPatientId())) {
+                patientService.updatePatient(patientProfileDTO.getPatientId(), patientProfileDTO);
+
+                return new ResponseEntity<>(patientProfileDTO, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("User do NOT have access", HttpStatus.I_AM_A_TEAPOT);
+            }
+
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
         } catch (Exception e) {
