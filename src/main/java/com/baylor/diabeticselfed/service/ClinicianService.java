@@ -1,5 +1,6 @@
 package com.baylor.diabeticselfed.service;
 
+import com.baylor.diabeticselfed.entities.Clinician;
 import com.baylor.diabeticselfed.model.ViewPatientSummary;
 import com.baylor.diabeticselfed.repository.ClinicianRepository;
 
@@ -22,6 +23,11 @@ public class ClinicianService {
 //    public List<ViewPatientSummary> getViewPatientSummary() {
 ////        return clinicianRepository.findAll();
 //    }
+
+    public List<Clinician> getAllClinicians() {
+        return clinicianRepository.findAll();
+    }
+
 }
 
 
