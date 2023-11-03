@@ -8,9 +8,11 @@ import com.baylor.diabeticselfed.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,14 +27,19 @@ public class MessageService {
     UserRepository userRepository;
 
     public Message sendMessage(User sender, User receiver, String content) {
+        System.out.println("Start Service");
         Message message = new Message();
         message.setSender(sender);
+        System.out.println("finish setSender");
         message.setReceiver(receiver);
+        System.out.println("finish setReceiver");
         message.setContent(content);
         message.setTimestamp(new Date());
 
         // Manage bidirectional relationship
+//                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sender not found"));
         sender.getSentMessages().add(message);
+        System.out.println("Reach");
         receiver.getReceivedMessages().add(message);
 
         return messageRepository.save(message);
@@ -42,9 +49,9 @@ public class MessageService {
         return messageRepository.findBySenderAndReceiver(user1, user2);
     }
 
-    public List<LastMessageDTO> getLastMessageForEachReceiver(Integer senderId) {
-        User sender = userRepository.findById(senderId).orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "No such user found"));
-
+    public List<LastMessageDTO> getLastMessageForEachReceiver(Integer senderId, Principal connectedUser) {
+        User sender = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        sender = userRepository.findById(sender.getId()).get();
         List<Integer> receiverIds = messageRepository.findDistinctReceiverIdsBySenderId(senderId);
         System.out.println("receiverIds:" + receiverIds);
         List<Integer> senderIds = messageRepository.findDistinctSenderIdsByReceiverId(senderId);
