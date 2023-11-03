@@ -12,4 +12,5 @@ public class MessageDTO {
     private String receiverName;
     private String content;
     private Date time;
+    private Boolean isRead;
 }
