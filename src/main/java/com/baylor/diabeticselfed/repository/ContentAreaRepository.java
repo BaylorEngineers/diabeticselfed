@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface ContentAreaRepository extends JpaRepository<ContentArea, Integer> {
     Optional<ContentArea> findByName(String name);
-
 }

@@ -1,12 +1,11 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -20,8 +19,30 @@ public class ModuleLog {
     @Id
     @GeneratedValue
     private Integer id;
-    private int patientId;
-    private int moduleId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "module_id")
+    private Module module;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "module_progress_id")
+    private ModuleProgress moduleProgress;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime startT;
+
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime endT;
+
+    @AssertTrue(message = "End time must be later than start time")
+    public boolean isEndTimeValid() {
+        if (startT == null || endT == null) {
+            return true; // Allow null values to be processed by other validation rules
+        }
+        return endT.isAfter(startT);
+    }
 }
