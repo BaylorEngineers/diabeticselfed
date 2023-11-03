@@ -1,9 +1,6 @@
 package com.baylor.diabeticselfed.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -18,7 +15,11 @@ public class Goal {
     @Id
     @GeneratedValue
     private Integer id;
-    private Integer patientId;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
+
     private Integer weightLossPercent;
     private boolean isAccomplished;
 }
