@@ -41,6 +41,7 @@ public class SecurityConfiguration {
             "/webjars/**",
             "/swagger-ui.html",
             "/api/v1/forum-posts/posts/",
+            "api/content-areas",
             "/ws/**"};
 
 //     "/api/v1/messages/**",
