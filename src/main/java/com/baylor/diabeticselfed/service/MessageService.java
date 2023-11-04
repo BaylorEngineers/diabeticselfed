@@ -68,6 +68,7 @@ public class MessageService {
                 List<Message> conversation1 = getMessagesBetweenUsers(receiver,sender );
                 for (Message message: conversation1
                      ) {
+//                    System.out.println(message.toString());
                     conversation.add(message);
                 }
 
