@@ -33,5 +33,6 @@ public class Survey {
     @JsonIgnore
     private Question question;
 
-    private boolean answer;
+    private Boolean answer;
+
 }
