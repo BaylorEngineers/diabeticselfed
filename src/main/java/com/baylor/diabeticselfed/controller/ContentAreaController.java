@@ -35,4 +35,11 @@ public class ContentAreaController {
         return new ResponseEntity<>(contentAreas, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ContentArea> getContentAreaById(@PathVariable Long id) {
+        return contentAreaService.getContentAreaById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 }
