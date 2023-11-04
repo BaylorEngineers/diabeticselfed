@@ -50,11 +50,16 @@ public class SurveyController {
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-            surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
+            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p, q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
+                surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
 
-            Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
+                Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 
-            return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
+                return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("Already exists", HttpStatus.ALREADY_REPORTED);
+            }
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
