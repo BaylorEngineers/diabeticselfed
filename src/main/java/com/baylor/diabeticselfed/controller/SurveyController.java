@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -53,7 +54,7 @@ public class SurveyController {
 
             Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 
-            return new ResponseEntity<>(s, HttpStatus.OK);
+            return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
@@ -64,14 +65,24 @@ public class SurveyController {
     }
 
     @GetMapping("/fetch/{patientId}")
-    public List<Survey> fetchSurveyByPatientId(@PathVariable Integer patientId, Principal connectedUser) {
+    public List<SurveyDTO> fetchSurveyByPatientId(@PathVariable Integer patientId, Principal connectedUser) {
 
         var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         Patient p = patientRepository.findByPatientUser(user)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
 
-        return surveyService.fetchSurveyByPatient(p);
+        List<Survey> surveyList = surveyService.fetchSurveyByPatient(p);
+        List<SurveyDTO> returnList = new ArrayList<>();
+        for (Survey s : surveyList) {
+            SurveyDTO temp = new SurveyDTO();
+            temp.setDateT(s.getDateT().toString());
+            temp.setPatientId(s.getPatient().getId());
+            temp.setQuestionId(s.getQuestion().getId());
+            temp.setResponse(s.getAnswer());
+            returnList.add(temp);
+        }
+        return returnList;
     }
 
 }
