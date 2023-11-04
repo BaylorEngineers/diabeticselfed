@@ -60,6 +60,19 @@ public class ModuleController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getModuleById(@PathVariable Long id) {
+        try {
+            Module module = moduleService.findModuleById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Module not found"));
+            return new ResponseEntity<>(module, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 
 }
