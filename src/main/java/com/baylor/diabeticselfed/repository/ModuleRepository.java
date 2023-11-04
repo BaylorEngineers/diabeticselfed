@@ -14,5 +14,6 @@ public interface ModuleRepository extends JpaRepository<Module, Integer> {
     List<Module> findByContentArea(ContentArea contentArea);
 
     Optional<Module> findByName(String name);
+    Optional<Module> findById(Long id);
 
 }

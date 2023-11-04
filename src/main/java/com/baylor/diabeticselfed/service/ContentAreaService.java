@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,13 +22,17 @@ public class ContentAreaService {
         return contentAreaRepository.save(contentArea);
     }
 
-    public List<ContentArea> getAllContentAreas() {
-        return contentAreaRepository.findAll();
-    }
+//    public List<ContentArea> getAllContentAreas() {
+//        return contentAreaRepository.findAll();
+//    }
 
     public List<ContentAreaDTO> getAllContentAreasDTO() {
         return contentAreaRepository.findAll().stream()
                 .map(area -> new ContentAreaDTO(area.getId(), area.getName()))
                 .collect(Collectors.toList());
+    }
+
+    public Optional<ContentArea> getContentAreaById(Long contentAreaId) {
+        return contentAreaRepository.findById(contentAreaId);
     }
 }
