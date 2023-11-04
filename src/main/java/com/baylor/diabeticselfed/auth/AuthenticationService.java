@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +88,6 @@ public class AuthenticationService {
 
         clinician.setClinicianUser(user);
         clinician.setName(request.getFirstname()+" "+request.getLastname());
-        clinician.setEmail(request.getEmail());
         clinician.setFirstname(request.getFirstname());
         clinician.setLastname(request.getLastname());
         clinicianRepository.save(clinician);
@@ -107,12 +107,20 @@ public class AuthenticationService {
 
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     System.out.println("Come for login");
-    authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(
-            request.getEmail(),
-            request.getPassword()
-        )
-    );
+    try {
+      System.out.println("Come for login");
+      authenticationManager.authenticate(
+              new UsernamePasswordAuthenticationToken(
+                      request.getEmail(),
+                      request.getPassword()
+              )
+      );
+      System.out.println("Authenticated successfully");
+    } catch (AuthenticationException e) {
+      System.out.println("Authentication failed: " + e.getMessage());
+      // Consider re-throwing the exception or handling it accordingly
+      throw e;
+    }
     System.out.println("Come for Check User");
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
