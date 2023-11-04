@@ -63,8 +63,6 @@ public class DiabeticSelfEdApplication {
             String relativePath = "contents/HealthyEating";
             try (Stream<Path> paths = Files.walk(Paths.get(relativePath))) {
                 paths.filter(Files::isRegularFile).forEach(path -> {
-                    System.out.println("File found: " + path.toAbsolutePath());
-
                     Module module = new Module();
                     module.setName(path.getFileName().toString());
                     module.setFilePath(relativePath + "/" + path.getFileName().toString()); // Set the file path
