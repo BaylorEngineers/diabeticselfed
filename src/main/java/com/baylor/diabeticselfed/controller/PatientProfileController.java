@@ -3,6 +3,7 @@ package com.baylor.diabeticselfed.controller;
 import com.baylor.diabeticselfed.dto.MessageDTO;
 import com.baylor.diabeticselfed.dto.PatientProfileDTO;
 import com.baylor.diabeticselfed.entities.Message;
+import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.Role;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.service.PatientService;
@@ -43,6 +44,19 @@ public class PatientProfileController {
                 return new ResponseEntity<>("User do NOT have access", HttpStatus.I_AM_A_TEAPOT);
             }
 
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping("/detail/{patientId}")
+    public ResponseEntity<Patient> getPatientDetail(@PathVariable Integer patientId) {
+        try {
+            Patient patient = patientService.getPatientDetail(patientId);
+            return ResponseEntity.ok(patient);
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
         } catch (Exception e) {
