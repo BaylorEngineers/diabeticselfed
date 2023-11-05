@@ -4,8 +4,10 @@ import com.baylor.diabeticselfed.auth.AuthenticationService;
 import com.baylor.diabeticselfed.auth.RegisterRequest;
 import com.baylor.diabeticselfed.entities.ContentArea;
 import com.baylor.diabeticselfed.entities.Module;
+import com.baylor.diabeticselfed.entities.Question;
 import com.baylor.diabeticselfed.repository.ContentAreaRepository;
 import com.baylor.diabeticselfed.repository.ModuleRepository;
+import com.baylor.diabeticselfed.repository.QuestionRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,6 +17,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.baylor.diabeticselfed.entities.Role.ADMIN;
@@ -84,5 +88,21 @@ public class DiabeticSelfEdApplication {
             newContentArea.setName(name);
             return repository.save(newContentArea);
         });
+    }
+
+    @Bean
+    public CommandLineRunner addQuestions(QuestionRepository questionRepository) {
+        return args -> {
+
+
+            // Create sample questions
+            List<Question> questions = new ArrayList<>();
+            questions.add(new Question(1, "Do you feel like you have been adhering to a healthy diet the past few days", null));
+            questions.add(new Question(2, "What is your weight today? Please enter your weight in pounds.", null));
+            questions.add(new Question(3, "At the beginning of each new week: Did you meet your action plan goal from last week? (Yes/No)", null));
+
+            // Save questions to the database
+            questionRepository.saveAll(questions);
+        };
     }
 }
