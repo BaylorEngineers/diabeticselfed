@@ -50,7 +50,7 @@ public class SurveyController {
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
 
             if (surveyService.findSurveyByPatientAndQuestionAndDateT(p, q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
                 surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
