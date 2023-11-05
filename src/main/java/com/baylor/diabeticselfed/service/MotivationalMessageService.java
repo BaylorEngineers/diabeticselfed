@@ -27,4 +27,13 @@ public class MotivationalMessageService {
     public List<MotivationalMessage> fetchMotivationalMessage(Patient patient) {
         return motivationalMessageRepository.findByPatient(patient);
     }
+
+    public MotivationalMessage generateMotivationalMessage(Patient patient) {
+
+        MotivationalMessage message = new MotivationalMessage();
+        message.setMessage_content("Way to go!");
+        return message;
+    }
+
+
 }

@@ -43,8 +43,6 @@ public class SecurityConfiguration {
             "/api/v1/forum-posts/posts/",
             "api/content-areas/**",
             "/api/modules/**",
-            "/api/v1/survey/**",
-            "/api/v1/question/**",
             "/ws/**"};
 
 //     "/api/v1/messages/**",
