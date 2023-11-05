@@ -5,6 +5,8 @@ import com.baylor.diabeticselfed.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionService {
@@ -16,5 +18,10 @@ public class QuestionService {
         q.setDescription(description);
 
         return questionRepository.save(q);
+    }
+
+    public Optional<Question>
+    getQuestion(Integer questionId) {
+        return questionRepository.findById(questionId);
     }
 }
