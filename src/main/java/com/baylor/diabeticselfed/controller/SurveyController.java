@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/survey")
@@ -40,19 +42,22 @@ public class SurveyController {
 
     @PostMapping("/submit")
     public ResponseEntity<?> submitSurvey(@RequestBody SurveyDTO surveyDTO, Principal connectedUser) {
+        System.out.println("Tanvir " + surveyDTO.getDateT() + " -- " + surveyDTO.getQuestionId() + " + " + surveyDTO.getPatientId() + " + " + surveyDTO.getResponse());
 
         try {
-            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-            var p = patientRepository.findByPatientUser(user).get();
+
+//            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+//            var p = patientRepository.findByPatientUser(user).get();
+            Optional<Patient> p = patientRepository.findById(surveyDTO.getPatientId());
 
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-            surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
+            surveyResponseService.recordResponse(p.get(), formatter.parse(surveyDTO.getDateT()));
 
-            Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
+            Survey s = surveyService.submitSurvey(p.get(), formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 
             return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
 

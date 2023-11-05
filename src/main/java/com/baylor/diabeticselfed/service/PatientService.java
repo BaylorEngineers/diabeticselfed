@@ -40,4 +40,8 @@ public class PatientService {
     public Optional<Patient> findByUser(User user) {
         return patientRepository.findByPatientUser(user);
     }
+
+    public Patient getPatientDetail(Integer patientId) {
+        return patientRepository.findPatientWithUserDetails(patientId);
+    }
 }
