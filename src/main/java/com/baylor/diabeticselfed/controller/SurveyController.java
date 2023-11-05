@@ -42,24 +42,26 @@ public class SurveyController {
 
     @PostMapping("/submit")
     public ResponseEntity<?> submitSurvey(@RequestBody SurveyDTO surveyDTO, Principal connectedUser) {
-        System.out.println("Tanvir " + surveyDTO.getDateT() + " -- " + surveyDTO.getQuestionId() + " + " + surveyDTO.getPatientId() + " + " + surveyDTO.getResponse());
 
         try {
-
-//            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-//            var p = patientRepository.findByPatientUser(user).get();
-            Optional<Patient> p = patientRepository.findById(surveyDTO.getPatientId());
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            var p = patientRepository.findByPatientUser(user).get();
 
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
 
-            surveyResponseService.recordResponse(p.get(), formatter.parse(surveyDTO.getDateT()));
+            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p, q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
+                surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
 
-            Survey s = surveyService.submitSurvey(p.get(), formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
+                Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 
-            return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
+                return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("Already exists", HttpStatus.ALREADY_REPORTED);
+            }
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
