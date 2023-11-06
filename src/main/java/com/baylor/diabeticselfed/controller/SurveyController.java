@@ -45,15 +45,12 @@ public class SurveyController {
         System.out.println("Tanvir " + surveyDTO.getDateT() + " -- " + surveyDTO.getQuestionId() + " + " + surveyDTO.getPatientId() + " + " + surveyDTO.getResponse());
 
         try {
-<<<<<<< Updated upstream
 
 //            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 //            var p = patientRepository.findByPatientUser(user).get();
             Optional<Patient> p = patientRepository.findById(surveyDTO.getPatientId());
-=======
 //            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-            var p = patientRepository.findById(surveyDTO.getPatientId()).get();
->>>>>>> Stashed changes
+//            var p = patientRepository.findById(surveyDTO.getPatientId()).get();
 
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
