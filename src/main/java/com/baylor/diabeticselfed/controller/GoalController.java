@@ -42,7 +42,13 @@ public class GoalController {
                 return new ResponseEntity<>(null, HttpStatus.OK);
             }
             else {
-                return new ResponseEntity<>("User goal already exists", HttpStatus.FORBIDDEN);
+                Goal goal = goalService.retrieveGoalByPatient(patient);
+
+                goal.setWeightLossPercent(goalDTO.getWeightLossPercent());
+
+                goalService.updateGoal(goal);
+
+                return new ResponseEntity<>(goal, HttpStatus.OK);
             }
 
         } catch (ResponseStatusException e) {
@@ -78,6 +84,35 @@ public class GoalController {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/getGoal")
+    public ResponseEntity<?> getGoalByPatientId(Principal connectedUser) {
+        try {
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            Patient patient = patientRepository.findByPatientUser(user)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
+
+            if (goalService.findGoalByPatient(patient).isPresent()) {
+                Goal g = goalService.findGoalByPatient(patient)
+                        .orElseThrow();
+
+                return new ResponseEntity<>(g, HttpStatus.OK);
+            }
+            else {
+                return new ResponseEntity<>("There is no goal yet", HttpStatus.I_AM_A_TEAPOT);
+            }
+
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+
+
+
     }
 
 }
