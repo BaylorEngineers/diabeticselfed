@@ -40,7 +40,7 @@ public class WeightTrackerController {
             var patient = patientRepository.findByPatientUser(user).get();
 
             if (Objects.equals(patient.getId(), weightTrackerReportDTO.getPatientId())) {
-                SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
                 if (weightTrackerService.getReportByPatientIdANDDateT(weightTrackerReportDTO.getPatientId(), formatter.parse(weightTrackerReportDTO.getDateT())).isEmpty()) {
 
