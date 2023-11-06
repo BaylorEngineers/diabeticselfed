@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,5 +30,8 @@ public class SurveyService {
         return surveyRepository.findByPatient(patient);
     }
 
+    public Optional<Survey> findSurveyByPatientAndQuestionAndDateT(Patient patient, Question question, Date dateT) {
+        return surveyRepository.findByPatientAndQuestionAndDateT(patient, question, dateT);
+    }
 
 }
