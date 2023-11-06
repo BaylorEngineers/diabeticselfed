@@ -46,6 +46,7 @@ public class SecurityConfiguration {
             "/api/v1/survey/**",
             "api/v1/question/**",
             "api/v1/motivationalmessage/**",
+            "api/v1/weight/first/weightReport",
             "/ws/**"};
 
 //     "/api/v1/messages/**",
