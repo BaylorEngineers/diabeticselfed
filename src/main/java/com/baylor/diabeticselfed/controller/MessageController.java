@@ -79,7 +79,6 @@ public class MessageController {
             messageDTO.setSenderId(sentMessage.getSender().getId());
 
             messageDTO.setReceiverId(sentMessage.getReceiver().getId());
-            //System.out.println("Send");
             // Notify WebSocket subscribers about the new message
             messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getReceiverId(), messageDTO);
             messagingTemplate.convertAndSend("/topic/messages/" + messageDTO.getSenderId(), messageDTO);

@@ -56,6 +56,7 @@ public class AuthenticationController {
 
     Optional<Invitation> optionalInvitation = Optional.ofNullable(invitationRepository.findByToken(request.getToken()));
     if (optionalInvitation.isEmpty()) {
+
       return new ResponseEntity<>("Invalid invitation token", HttpStatus.BAD_REQUEST);
     }
 
