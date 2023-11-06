@@ -47,6 +47,7 @@ public class PatientProfileController {
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
         } catch (Exception e) {
+            System.out.println(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
