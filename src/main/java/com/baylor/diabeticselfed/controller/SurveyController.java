@@ -44,18 +44,19 @@ public class SurveyController {
     public ResponseEntity<?> submitSurvey(@RequestBody SurveyDTO surveyDTO, Principal connectedUser) {
 
         try {
-            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-            var p = patientRepository.findByPatientUser(user).get();
+
+            Optional<Patient> p = patientRepository.findById(surveyDTO.getPatientId());
+//            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
 
-            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p, q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
-                surveyResponseService.recordResponse(p, formatter.parse(surveyDTO.getDateT()));
+            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p.get(), q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
+                surveyResponseService.recordResponse(p.get(), formatter.parse(surveyDTO.getDateT()));
 
-                Survey s = surveyService.submitSurvey(p, formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
+                Survey s = surveyService.submitSurvey(p.get(), formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
 
                 return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
             }

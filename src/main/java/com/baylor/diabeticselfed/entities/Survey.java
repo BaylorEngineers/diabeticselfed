@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

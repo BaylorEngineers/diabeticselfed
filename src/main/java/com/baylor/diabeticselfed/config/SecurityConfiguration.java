@@ -44,7 +44,8 @@ public class SecurityConfiguration {
             "api/content-areas/**",
             "/api/modules/**",
             "/api/v1/survey/**",
-            "/api/v1/question/**",
+            "api/v1/question/**",
+            "api/v1/motivationalmessage/**",
             "/ws/**"};
 
 //     "/api/v1/messages/**",

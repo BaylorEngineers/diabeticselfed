@@ -95,7 +95,7 @@ public class DiabeticSelfEdApplication {
 
             // Create sample questions
             List<Question> questions = new ArrayList<>();
-            questions.add(new Question(1, "Do you feel like you have been adhering to a healthy diet the past few days", null));
+            questions.add(new Question(1, "Do you feel like you have been adhering to a healthy diet the past few days?", null));
             questions.add(new Question(2, "What is your weight today? Please enter your weight in pounds.", null));
             questions.add(new Question(3, "At the beginning of each new week: Did you meet your action plan goal from last week? (Yes/No)", null));
 
