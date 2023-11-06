@@ -1,11 +1,17 @@
 package com.baylor.diabeticselfed.controller;
 
+import com.baylor.diabeticselfed.dto.FirstWeightDTO;
 import com.baylor.diabeticselfed.dto.WeightTrackerReportDTO;
+import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.entities.WeightTracker;
+import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
+import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.service.WeightTrackerService;
+import com.baylor.diabeticselfed.token.Token;
+import com.baylor.diabeticselfed.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +36,12 @@ public class WeightTrackerController {
 
     @Autowired
     private PatientRepository patientRepository;
+
+    @Autowired
+    private InvitationRepository invitationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping("/addReport")
     public ResponseEntity<?> addReport(@RequestBody WeightTrackerReportDTO weightTrackerReportDTO, Principal connectedUser) {
@@ -75,6 +87,22 @@ public class WeightTrackerController {
         var patient = patientRepository.findByPatientUser(user).get();
 
         return weightTrackerService.getReportByPatientId(patient.getId());
+    }
+
+    @PostMapping("/first/weightReport")
+    public ResponseEntity<?> firstWeightReport(@RequestBody FirstWeightDTO firstWeightDTO) {
+        Invitation t = invitationRepository.findByToken(firstWeightDTO.getSignUpToken());
+        var user = userRepository.findByEmail(t.getEmail())
+                .orElseThrow();
+        var patient = patientRepository.findByPatientUser(user).get();
+
+        weightTrackerService.addNewWeightTrackerReport(patient.getId(),
+                firstWeightDTO.getDateT(),
+                firstWeightDTO.getHeight(),
+                firstWeightDTO.getWeight());
+
+        return new ResponseEntity<>(null, HttpStatus.OK);
+
     }
 
 }
