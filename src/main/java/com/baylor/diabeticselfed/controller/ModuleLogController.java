@@ -43,7 +43,6 @@ public class ModuleLogController {
     public ResponseEntity<?> createModuleLog(@RequestBody ModuleLogDTO moduleLogDTO) {
 
         try {
-
             Patient p = patientRepository.findById(moduleLogDTO.getPatientId())
                     .orElseThrow();
             Module m = moduleRepository.findById(moduleLogDTO.getModuleId())
@@ -65,8 +64,7 @@ public class ModuleLogController {
                 ModuleLog ml = moduleLogService.createModuleLog(p, m, mp, start, end);
 
                 return new ResponseEntity<>(ml, HttpStatus.OK);
-            }
-            else {
+            } else {
                 return new ResponseEntity<>("This time slot is overlapping with existing time", HttpStatus.IM_USED);
             }
 
