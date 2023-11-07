@@ -65,6 +65,10 @@ public class AuthenticationController {
       return new ResponseEntity<>("Invitation token is expired or already used", HttpStatus.BAD_REQUEST);
     }
 
+    if (!invitation.getEmail().equals(request.getEmail())) {
+      return new ResponseEntity<>("Email does not match invitation", HttpStatus.BAD_REQUEST);
+    }
+
     request.setRole(invitation.getRole());
     AuthenticationResponse response = service.register(request);
     invitation.setUsed(true);
