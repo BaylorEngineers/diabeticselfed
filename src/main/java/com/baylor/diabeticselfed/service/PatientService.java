@@ -3,11 +3,14 @@ package com.baylor.diabeticselfed.service;
 import com.baylor.diabeticselfed.dto.PatientProfileDTO;
 import com.baylor.diabeticselfed.entities.ForumPost;
 import com.baylor.diabeticselfed.entities.Patient;
+import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,5 +35,13 @@ public class PatientService {
 
 
         patientRepository.save(patient);
+    }
+
+    public Optional<Patient> findByUser(User user) {
+        return patientRepository.findByPatientUser(user);
+    }
+
+    public Patient getPatientDetail(Integer patientId) {
+        return patientRepository.findPatientWithUserDetails(patientId);
     }
 }

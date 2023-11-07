@@ -17,9 +17,11 @@ import com.baylor.diabeticselfed.model.DtoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,18 +42,6 @@ public class ForumPostController {
 
     @Autowired
     PatientRepository patientRepository;
-
-    public newForumPostDTO toDTO(ForumPost post) {
-        newForumPostDTO dto = new newForumPostDTO();
-        dto.setId(post.getId());
-        dto.setTitle(post.getTitle());
-        dto.setContent(post.getContent());
-        dto.setPostDate(post.getPostDate());
-        dto.setOwnerFirstName(post.getPatient().getFirstname());
-        dto.setOwnerLastName(post.getPatient().getLastname());
-        dto.setComments(post.getComments().stream().map(this::toDTO).collect(Collectors.toList()));
-        return dto;
-    }
 
     public CommentDTO toDTO(Comment comment) {
         CommentDTO dto = new CommentDTO();
@@ -78,8 +68,10 @@ public class ForumPostController {
         }
     }
     @DeleteMapping("/{postId}/patient/{patientId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId, @PathVariable Long patientId) {
+    public ResponseEntity<?> deletePost(@PathVariable Long postId, @PathVariable Long patientId, Principal connectedUser) {
         try {
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            var patient = patientRepository.findByPatientUser(user).get();
             // Check if the post exists
             if (!forumPostRepository.existsById(postId)) {
                 System.out.println("Post with ID " + postId + " does not exist.");
@@ -87,8 +79,8 @@ public class ForumPostController {
             }
 
             // Check if the post belongs to the patient
-            if (forumPostService.postBelongsToPatient(postId, patientId)) {
-                forumPostService.deleteByIdAndPatientId(postId, patientId);
+            if (forumPostService.postBelongsToPatient(postId, patient.getId().longValue())) {
+                forumPostService.deleteByIdAndPatientId(postId, patient.getId().longValue());
                 System.out.println("Deleted post with ID: " + postId);
                 return ResponseEntity.noContent().build();
             } else {
@@ -105,21 +97,23 @@ public class ForumPostController {
     }
 
     @PostMapping(value = "/post", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<ForumPost> postForum(@RequestBody ForumPostDTO post) {
+    public ResponseEntity<ForumPost> postForum(@RequestBody ForumPostDTO post, Principal connectedUser) {
         System.out.println("Inside postForum method. Received post: " + post);
         var newpost = new ForumPost();
-        newpost.setPatient(patientRepository.findById(post.getPatientId()).get());
+        var patient = patientRepository.findByPatientUser((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()).get();
+        newpost.setPatient(patient);
         newpost.setContent(post.getContent());
         newpost.setTitle(post.getTitle());
         newpost.setPostDate(new Date());
-        ForumPost savedPost = forumPostService.createPostForPatient(post.getPatientId(), newpost);
+        ForumPost savedPost = forumPostService.createPostForPatient(patient.getId().longValue(), newpost);
         return ResponseEntity.ok(savedPost);
     }
 
     @GetMapping("/posts/{patientId}")
-    public ResponseEntity<Object> getAllPostsByPatientId(@PathVariable Long patientId) {
+    public ResponseEntity<Object> getAllPostsByPatientId(@PathVariable Long patientId, Principal connectedUser) {
         try {
-            List<newForumPostDTO> dtos = forumPostService.findAllPostsByPatientId(patientId);
+            var patient = patientRepository.findByPatientUser((User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()).get();
+            List<newForumPostDTO> dtos = forumPostService.findAllPostsByPatientId(patient.getId().longValue());
             return ResponseEntity.ok(dtos);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
@@ -144,22 +138,24 @@ public class ForumPostController {
 
 
     @PostMapping("/comments")
-    public ResponseEntity<Comment> addComment(@RequestBody CommentInputDTO input) {
-        Comment comment = forumPostService.createCommentForPost(input.getPostId(), input.getUserId(), input.getContent());
+    public ResponseEntity<Comment> addComment(@RequestBody CommentInputDTO input, Principal connectedUser) {
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        Comment comment = forumPostService.createCommentForPost(input.getPostId(), user.getId().longValue(), input.getContent());
         return ResponseEntity.ok(comment);
     }
 
     @DeleteMapping("comments/{id}/user/{userID}")
-    public ResponseEntity<String> softDeleteComment(@PathVariable Long id, @PathVariable Long userID) {
+    public ResponseEntity<String> softDeleteComment(@PathVariable Long id, @PathVariable Long userID, Principal connectedUser) {
         try {
             Comment comment = commentRepository.findCommentById(id);
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
             if (comment == null) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body("Comment not found!");
             }
 
-            if (!comment.getUser().getId().equals(userID.intValue())) {
+            if (!comment.getUser().getId().equals(user.getId())) {
 
                 System.out.println("Input UserID:"+userID);
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
@@ -178,13 +174,14 @@ public class ForumPostController {
 
 
     @PostMapping("/comments/{commentId}")
-    public ResponseEntity<Comment> commentOnComment(@PathVariable Long commentId, @RequestBody CommentInputDTO childCommentDTO) {
+    public ResponseEntity<Comment> commentOnComment(@PathVariable Long commentId, @RequestBody CommentInputDTO childCommentDTO, Principal connectedUser) {
         Comment parentComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Parent comment not found"));
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
 
         Comment childComment = new Comment();
         // Assuming you have a userRepository and forumPostRepository to fetch User and ForumPost
-        User user = userRepository.findById(childCommentDTO.getUserId())
+         user = userRepository.findById(user.getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
 

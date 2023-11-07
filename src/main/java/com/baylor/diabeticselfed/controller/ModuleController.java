@@ -9,6 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Paths;
+
 import java.util.List;
 
 @RestController
@@ -53,6 +61,45 @@ public class ModuleController {
             Module m = moduleService.findModuleByName(moduleName)
                     .orElseThrow();
             return new ResponseEntity<>(m, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getModuleById(@PathVariable Long id) {
+        try {
+            Module module = moduleService.findModuleById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Module not found"));
+            return new ResponseEntity<>(module, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(null, e.getStatusCode());
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/pdf/{id}")
+    public ResponseEntity<Resource> getModulePDF(@PathVariable Long id) {
+        try {
+            Module module = moduleService.findModuleById(id)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Module not found"));
+
+            String filePath = module.getFilePath();
+            if (filePath == null || filePath.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File path is empty");
+            }
+
+            Resource file = new InputStreamResource(new FileInputStream(Paths.get(filePath).toFile()));
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(file);
+
+        } catch (FileNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "PDF file not found", e);
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
         } catch (Exception e) {

@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -33,5 +32,6 @@ public class Survey {
     @JsonIgnore
     private Question question;
 
-    private boolean answer;
+    private Boolean answer;
+
 }

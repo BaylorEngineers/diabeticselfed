@@ -41,6 +41,12 @@ public class SecurityConfiguration {
             "/webjars/**",
             "/swagger-ui.html",
             "/api/v1/forum-posts/posts/",
+            "api/content-areas/**",
+            "/api/modules/**",
+            "/api/v1/survey/**",
+            "api/v1/question/**",
+            "api/v1/motivationalmessage/**",
+            "api/v1/weight/first/weightReport",
             "/ws/**"};
 
 //     "/api/v1/messages/**",
@@ -53,7 +59,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowCredentials(true); // important if you are using session cookies or JWT tokens
         configuration.setAllowedHeaders(Arrays.asList("*"));
 

@@ -59,7 +59,7 @@ public class ClinicianService {
             List<String> questionDescriptionList = new ArrayList<>();
 
             for (Survey survey : surveys) {
-                answerList.add(survey.isAnswer());
+                answerList.add(survey.getAnswer());
                 answerDateList.add(survey.getDateT());
                 questionDescriptionList.add(survey.getQuestion().getDescription());
             }

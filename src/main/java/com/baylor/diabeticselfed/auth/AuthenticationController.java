@@ -56,12 +56,17 @@ public class AuthenticationController {
 
     Optional<Invitation> optionalInvitation = Optional.ofNullable(invitationRepository.findByToken(request.getToken()));
     if (optionalInvitation.isEmpty()) {
+
       return new ResponseEntity<>("Invalid invitation token", HttpStatus.BAD_REQUEST);
     }
 
     Invitation invitation = optionalInvitation.get();
     if (invitation.isUsed() || invitation.getExpiryDate().isBefore(LocalDateTime.now())) {
       return new ResponseEntity<>("Invitation token is expired or already used", HttpStatus.BAD_REQUEST);
+    }
+
+    if (!invitation.getEmail().equals(request.getEmail())) {
+      return new ResponseEntity<>("Email does not match invitation", HttpStatus.BAD_REQUEST);
     }
 
     request.setRole(invitation.getRole());

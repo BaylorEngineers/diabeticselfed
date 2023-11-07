@@ -1,21 +1,30 @@
 package com.baylor.diabeticselfed.controller;
 
+import com.baylor.diabeticselfed.dto.FirstWeightDTO;
 import com.baylor.diabeticselfed.dto.WeightTrackerReportDTO;
+import com.baylor.diabeticselfed.entities.Invitation;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.User;
 import com.baylor.diabeticselfed.entities.WeightTracker;
+import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
+import com.baylor.diabeticselfed.repository.UserRepository;
 import com.baylor.diabeticselfed.service.WeightTrackerService;
+import com.baylor.diabeticselfed.token.Token;
+import com.baylor.diabeticselfed.token.TokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/weight")
@@ -28,28 +37,40 @@ public class WeightTrackerController {
     @Autowired
     private PatientRepository patientRepository;
 
+    @Autowired
+    private InvitationRepository invitationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/addReport")
-    public ResponseEntity<?> addReport(@RequestBody WeightTrackerReportDTO weightTrackerReportDTO) {
+    public ResponseEntity<?> addReport(@RequestBody WeightTrackerReportDTO weightTrackerReportDTO, Principal connectedUser) {
 
         try {
 
-            Patient patient = patientRepository.findById(weightTrackerReportDTO.getPatientId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
+            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+            var patient = patientRepository.findByPatientUser(user).get();
 
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            if (Objects.equals(patient.getId(), weightTrackerReportDTO.getPatientId())) {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
-            if (weightTrackerService.getReportByPatientIdANDDateT(weightTrackerReportDTO.getPatientId(), formatter.parse(weightTrackerReportDTO.getDateT())).isEmpty()) {
+                if (weightTrackerService.getReportByPatientIdANDDateT(weightTrackerReportDTO.getPatientId(), formatter.parse(weightTrackerReportDTO.getDateT())).isEmpty()) {
 
-                weightTrackerService.addNewWeightTrackerReport(weightTrackerReportDTO.getPatientId(),
-                        formatter.parse(weightTrackerReportDTO.getDateT()),
-                        weightTrackerReportDTO.getHeight(),
-                        weightTrackerReportDTO.getWeight());
+                    weightTrackerService.addNewWeightTrackerReport(weightTrackerReportDTO.getPatientId(),
+                            formatter.parse(weightTrackerReportDTO.getDateT()),
+                            weightTrackerReportDTO.getHeight(),
+                            weightTrackerReportDTO.getWeight());
 
-                return new ResponseEntity<>(null, HttpStatus.OK);
+                    return new ResponseEntity<>(null, HttpStatus.OK);
+                }
+                else {
+                    return new ResponseEntity<>("Patient already has a report on this date", HttpStatus.BAD_REQUEST);
+                }
             }
             else {
-                return new ResponseEntity<>("Patient already has a report on this date", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("User do Not have access", HttpStatus.I_AM_A_TEAPOT);
             }
+
 
         } catch (ResponseStatusException e) {
             return new ResponseEntity<>(null, e.getStatusCode());
@@ -60,9 +81,28 @@ public class WeightTrackerController {
     }
 
     @GetMapping("/fetchReport/{patientId}")
-    public List<WeightTracker> fetchReportByPatientId(@PathVariable Integer patientId) {
+    public List<WeightTracker> fetchReportByPatientId(@PathVariable Integer patientId, Principal connectedUser) {
 
-        return weightTrackerService.getReportByPatientId(patientId);
+        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var patient = patientRepository.findByPatientUser(user).get();
+
+        return weightTrackerService.getReportByPatientId(patient.getId());
+    }
+
+    @PostMapping("/first/weightReport")
+    public ResponseEntity<?> firstWeightReport(@RequestBody FirstWeightDTO firstWeightDTO) {
+        Invitation t = invitationRepository.findByToken(firstWeightDTO.getSignUpToken());
+        var user = userRepository.findByEmail(t.getEmail())
+                .orElseThrow();
+        var patient = patientRepository.findByPatientUser(user).get();
+
+        weightTrackerService.addNewWeightTrackerReport(patient.getId(),
+                firstWeightDTO.getDateT(),
+                firstWeightDTO.getHeight(),
+                firstWeightDTO.getWeight());
+
+        return new ResponseEntity<>(null, HttpStatus.OK);
+
     }
 
 }
