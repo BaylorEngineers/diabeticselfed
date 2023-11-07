@@ -3,6 +3,8 @@ package com.baylor.diabeticselfed.controller;
 import com.baylor.diabeticselfed.dto.ModuleLogDTO;
 import com.baylor.diabeticselfed.entities.*;
 import com.baylor.diabeticselfed.entities.Module;
+import com.baylor.diabeticselfed.entities.ModuleProgress;
+import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.repository.ModuleProgressRepository;
 import com.baylor.diabeticselfed.repository.ModuleRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
@@ -68,7 +70,8 @@ public class ModuleLogController {
 
                 return new ResponseEntity<>(ml, HttpStatus.OK);
             }
-            else {
+            else
+            {
                 return new ResponseEntity<>("This time slot is overlapping with existing time", HttpStatus.IM_USED);
             }
 
