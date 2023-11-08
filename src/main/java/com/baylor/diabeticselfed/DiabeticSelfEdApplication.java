@@ -47,8 +47,8 @@ public class DiabeticSelfEdApplication {
             System.out.println("Admin token: " + service.register(admin).getAccessToken());
 
             var clinician = RegisterRequest.builder()
-                    .firstname("Admin")
-                    .lastname("Admin")
+                    .firstname("Clinician")
+                    .lastname("Sky")
                     .email("clinician@mail.com")
                     .password("password")
                     .role(CLINICIAN)
