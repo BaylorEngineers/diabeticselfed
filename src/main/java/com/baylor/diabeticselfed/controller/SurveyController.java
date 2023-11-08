@@ -53,7 +53,7 @@ public class SurveyController {
 
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
 
-            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p.get(), q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
+            if (true || surveyService.findSurveyByPatientAndQuestionAndDateT(p.get(), q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
                 surveyResponseService.recordResponse(p.get(), formatter.parse(surveyDTO.getDateT()));
 
                 Survey s = surveyService.submitSurvey(p.get(), formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
