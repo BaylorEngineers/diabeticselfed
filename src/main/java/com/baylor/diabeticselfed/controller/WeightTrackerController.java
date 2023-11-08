@@ -54,6 +54,13 @@ public class WeightTrackerController {
             if (Objects.equals(patient.getId(), weightTrackerReportDTO.getPatientId())) {
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
+                if (weightTrackerReportDTO.getWeight() == null || weightTrackerReportDTO.getHeight() == null) {
+                    return new ResponseEntity<>("Invalid values", HttpStatus.FORBIDDEN);
+                }
+                else if (weightTrackerReportDTO.getWeight() < 0 || weightTrackerReportDTO.getHeight() < 0) {
+                    return new ResponseEntity<>("Invalid values", HttpStatus.FORBIDDEN);
+                }
+
                 if (weightTrackerService.getReportByPatientIdANDDateT(weightTrackerReportDTO.getPatientId(), formatter.parse(weightTrackerReportDTO.getDateT())).isEmpty()) {
 
                     weightTrackerService.addNewWeightTrackerReport(weightTrackerReportDTO.getPatientId(),
@@ -95,6 +102,13 @@ public class WeightTrackerController {
         var user = userRepository.findByEmail(t.getEmail())
                 .orElseThrow();
         var patient = patientRepository.findByPatientUser(user).get();
+
+        if (firstWeightDTO.getWeight() == null || firstWeightDTO.getHeight() == null) {
+            return new ResponseEntity<>("Invalid values", HttpStatus.FORBIDDEN);
+        }
+        else if (firstWeightDTO.getWeight() < 0 || firstWeightDTO.getHeight() < 0) {
+            return new ResponseEntity<>("Invalid values", HttpStatus.FORBIDDEN);
+        }
 
         weightTrackerService.addNewWeightTrackerReport(patient.getId(),
                 firstWeightDTO.getDateT(),
