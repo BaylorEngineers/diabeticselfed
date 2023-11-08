@@ -12,16 +12,22 @@ import java.util.Date;
 public class PatientProfileDTO {
 
     private Integer patientId;
-
     private String name;
-
-    private String email;
-
     private Date dob;
-
-    private int age;
-
-    private String levelOfEd;
-
+    private String education;
     private String type;
+
+//    private Integer patientId;
+//
+//    private String name;
+//
+//    private String email;
+//
+//    private Date dob;
+//
+//    private int age;
+//
+//    private String levelOfEd;
+//
+//    private String type;
 }
