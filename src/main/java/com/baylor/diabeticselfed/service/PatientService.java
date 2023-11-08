@@ -24,17 +24,12 @@ public class PatientService {
 
         //TODO: set changed values from patientProfileDTO
 
-        Patient patient = new Patient();
+        savePatient.setName(patientProfileDTO.getName());
+        savePatient.setDOB(patientProfileDTO.getDob());
+        savePatient.setLevelOfEd(Patient.EducationLevel.valueOf(patientProfileDTO.getEducation()));
+        savePatient.setType(Patient.Type.valueOf(patientProfileDTO.getType()));
 
-        patient.setId(patientProfileDTO.getPatientId());
-        patient.setName(patientProfileDTO.getName());
-        patient.setDOB(patientProfileDTO.getDob());
-        patient.setEmail(patientProfileDTO.getEmail());
-        patient.setLevelOfEd(Patient.EducationLevel.valueOf(patientProfileDTO.getLevelOfEd()));
-        patient.setType(Patient.Type.valueOf(patientProfileDTO.getType()));
-
-
-        patientRepository.save(patient);
+        patientRepository.save(savePatient);
     }
 
     public Optional<Patient> findByUser(User user) {
