@@ -19,8 +19,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -76,6 +80,13 @@ public class AuthenticationController {
               "at least one uppercase letter, one lowercase letter, one number, and one special character.",
               HttpStatus.BAD_REQUEST);
     }
+
+    LocalDate dob = request.getDob().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    LocalDate currentDate = LocalDate.now();
+    if (Period.between(dob, currentDate).getYears() < 18) {
+      return new ResponseEntity<>("You must be at least 18 years old to register.", HttpStatus.BAD_REQUEST);
+    }
+
 
     request.setRole(invitation.getRole());
     AuthenticationResponse response = service.register(request);
