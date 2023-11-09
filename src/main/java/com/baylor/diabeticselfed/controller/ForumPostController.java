@@ -54,13 +54,13 @@ public class ForumPostController {
         return dto;
     }
     @GetMapping("/{postId}")
-    public ResponseEntity<newForumPostDTO> getPostById(@PathVariable Long postId) {
+    public ResponseEntity<newForumPostDTO> getPostById(@PathVariable Long postId, Principal connectedUser) {
         try {
             ForumPost post = forumPostService.findById(postId).orElse(null);
             if (post == null) {
                 return ResponseEntity.notFound().build();
             }
-            newForumPostDTO dto = DtoConverter.toForumPostDTO(post);
+            newForumPostDTO dto = DtoConverter.toForumPostDTO(post, connectedUser);
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,11 +123,11 @@ public class ForumPostController {
         }
     }
     @GetMapping("/allposts")
-    public ResponseEntity<List<newForumPostDTO>> getAllPosts() {
+    public ResponseEntity<List<newForumPostDTO>> getAllPosts(Principal principal) {
         try {
             List<ForumPost> posts = forumPostService.findAll();
             List<newForumPostDTO> dtos = posts.stream()
-                    .map(DtoConverter::toForumPostDTO)
+                    .map(post -> DtoConverter.toForumPostDTO(post, principal))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(dtos);
         } catch (Exception e) {

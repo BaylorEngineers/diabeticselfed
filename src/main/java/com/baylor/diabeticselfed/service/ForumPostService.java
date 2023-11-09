@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -63,8 +64,9 @@ public class ForumPostService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No patient found with ID: " + patientId);
         }
         List<ForumPost> posts = forumPostRepository.findByPatient_Id(patientId);// fetch posts from the repository
-        return posts.stream().map(DtoConverter::toForumPostDTO).collect(Collectors.toList());
-    }
+        return posts.stream()
+                .map(post -> DtoConverter.toForumPostDTO(post, null))
+                .collect(Collectors.toList());    }
     public boolean postBelongsToPatient(Long postId, Long patientId) {
         return forumPostRepository.existsByIdAndPatient_Id(postId, patientId);
     }
