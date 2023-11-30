@@ -24,6 +24,10 @@ public class Module {
     @JsonBackReference(value = "modules")
     private ContentArea contentArea;
 
+    @Column(length = 1000)
+    private String keywords;
+
+
     private String filePath;
 
 }
