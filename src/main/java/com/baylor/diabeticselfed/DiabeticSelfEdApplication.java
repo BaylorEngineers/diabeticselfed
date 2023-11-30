@@ -81,28 +81,27 @@ public class DiabeticSelfEdApplication {
             createContentArea("Physical Activity");
             createContentArea("Stress Reduction");
 
-            // Map to hold module names and keywords
-            HashMap<String, String> moduleKeywords = new HashMap<>();
+            HashMap<String, String[]> moduleDetails = new HashMap<>();
+            readModuleKeywords("contents/PreventT2Keywords.txt", moduleDetails);
 
-            // Read the modules.txt file and populate the map
-            readModuleKeywords("contents/PreventT2Keywords.txt", moduleKeywords);
-
-            // Print keywords for each module
-            moduleKeywords.forEach((moduleName, keywords) -> {
-                System.out.println("Module: " + moduleName + " - Keywords: " + keywords);
+            moduleDetails.forEach((moduleName, details) -> {
+                String description = details[0];
+                String keywords = details[1];
+                System.out.println("Module: " + moduleName + " - Description: " + description + " - Keywords: " + keywords);
             });
 
             String relativePath = "contents/HealthyEating";
             try (Stream<Path> paths = Files.walk(Paths.get(relativePath))) {
                 paths.filter(Files::isRegularFile).forEach(path -> {
                     String moduleName = path.getFileName().toString().replace(".pdf", "");
-                    if (moduleKeywords.containsKey(moduleName)) {
+                    if (moduleDetails.containsKey(moduleName)) {
+                        String[] details = moduleDetails.get(moduleName);
                         Module module = new Module();
                         module.setName(moduleName);
                         module.setFilePath(relativePath + "/" + path.getFileName().toString());
-                        module.setDescription("Description for " + moduleName);
+                        module.setDescription(details[0]); // Set description
                         module.setContentArea(healthyEating);
-                        module.setKeywords(moduleKeywords.get(moduleName));
+                        module.setKeywords(details[1]); // Set keywords
                         moduleRepository.save(module);
                     }
                 });
@@ -111,53 +110,49 @@ public class DiabeticSelfEdApplication {
             }
         };
     }
-    private void readModuleKeywords(String filePath, HashMap<String, String> moduleKeywords) throws IOException {
+
+    private void readModuleKeywords(String filePath, HashMap<String, String[]> moduleDetails) throws IOException {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             String currentModuleName = "";
+            String currentDescription = "";
             StringJoiner keywordJoiner = new StringJoiner(", ");
 
             while ((line = reader.readLine()) != null) {
-                if (line.matches("^\\d+\\.\\s.*")) { // Check if line is a module title
+                if (line.matches("^\\d+\\.\\s.*")) {
                     if (!currentModuleName.isEmpty()) {
-                        moduleKeywords.put(currentModuleName, keywordJoiner.toString());
+                        moduleDetails.put(currentModuleName, new String[]{currentDescription, keywordJoiner.toString()});
                         keywordJoiner = new StringJoiner(", ");
                     }
-                    currentModuleName = line.trim().split("\\.")[1].trim().split(":")[0].trim();
+
+                    String[] parts = line.split(":");
+                    currentModuleName = parts[0].trim().split("\\.")[1].trim();
+
+                    // Check if line contains both description and keywords
+                    if (parts.length > 1 && parts[1].contains("•")) {
+                        String[] descriptionAndKeywords = parts[1].split("•", 2);
+                        currentDescription = descriptionAndKeywords[0].trim();
+                        keywordJoiner.add(descriptionAndKeywords[1].trim());
+                    } else {
+                        currentDescription = parts.length > 1 ? parts[1].trim() : "";
+                    }
                 } else if (!line.trim().isEmpty() && line.startsWith("•")) {
                     String keyword = line.trim().substring(1).trim(); // Remove bullet point
                     keywordJoiner.add(keyword);
                 }
             }
             if (!currentModuleName.isEmpty()) {
-                moduleKeywords.put(currentModuleName, keywordJoiner.toString());
+                moduleDetails.put(currentModuleName, new String[]{currentDescription, keywordJoiner.toString()});
             }
         }
     }
+
 
     private ContentArea createContentArea(String name) {
         ContentArea contentArea = new ContentArea();
         contentArea.setName(name);
         return contentAreaRepository.save(contentArea);
     }
-//    private void readModuleKeywords(String filePath, HashMap<String, String> moduleKeywords) throws Exception {
-//        try (FileInputStream fis = new FileInputStream(filePath);
-//             XWPFDocument document = new XWPFDocument(fis)) {
-//            List<XWPFParagraph> paragraphs = document.getParagraphs();
-//
-//            for (int i = 0; i < paragraphs.size() - 1; i++) {
-//                XWPFParagraph currentPara = paragraphs.get(i);
-//                String text = currentPara.getText();
-//                if (text.startsWith("Module Title and Description")) {
-//                    String moduleName = text.split(":")[1].trim();
-//                    // Assuming the next paragraph contains the keywords
-//                    String keywords = paragraphs.get(i + 1).getText();
-//                    moduleKeywords.put(moduleName, keywords);
-//                }
-//            }
-//        }
-//    }
-
 
     @Bean
     public CommandLineRunner addQuestions(QuestionRepository questionRepository) {
