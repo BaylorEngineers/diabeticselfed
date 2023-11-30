@@ -8,18 +8,29 @@ import com.baylor.diabeticselfed.entities.Question;
 import com.baylor.diabeticselfed.repository.ContentAreaRepository;
 import com.baylor.diabeticselfed.repository.ModuleRepository;
 import com.baylor.diabeticselfed.repository.QuestionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.stream.Stream;
+
+import java.util.ArrayList;
 
 import static com.baylor.diabeticselfed.entities.Role.ADMIN;
 import static com.baylor.diabeticselfed.entities.Role.CLINICIAN;
@@ -27,6 +38,12 @@ import static com.baylor.diabeticselfed.entities.Role.CLINICIAN;
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
 public class DiabeticSelfEdApplication {
+
+    @Autowired
+    private ContentAreaRepository contentAreaRepository;
+
+    @Autowired
+    private ModuleRepository moduleRepository;
 
     public static void main(String[] args) {
         SpringApplication.run(DiabeticSelfEdApplication.class, args);
@@ -58,35 +75,89 @@ public class DiabeticSelfEdApplication {
     }
 
     @Bean
-    public CommandLineRunner contentAreaSetup(ContentAreaRepository contentAreaRepository, ModuleRepository moduleRepository) {
+    public CommandLineRunner contentAreaSetup() {
         return args -> {
-            ContentArea healthyEating = createContentArea(contentAreaRepository, "Healthy Eating");
-            createContentArea(contentAreaRepository, "Physical Activity");
-            createContentArea(contentAreaRepository, "Stress Reduction");
+            ContentArea healthyEating = createContentArea("Healthy Eating");
+            createContentArea("Physical Activity");
+            createContentArea("Stress Reduction");
+
+            // Map to hold module names and keywords
+            HashMap<String, String> moduleKeywords = new HashMap<>();
+
+            // Read the modules.txt file and populate the map
+            readModuleKeywords("contents/PreventT2Keywords.txt", moduleKeywords);
+
+            // Print keywords for each module
+            moduleKeywords.forEach((moduleName, keywords) -> {
+                System.out.println("Module: " + moduleName + " - Keywords: " + keywords);
+            });
 
             String relativePath = "contents/HealthyEating";
             try (Stream<Path> paths = Files.walk(Paths.get(relativePath))) {
                 paths.filter(Files::isRegularFile).forEach(path -> {
-                    Module module = new Module();
-                    module.setName(path.getFileName().toString());
-                    module.setFilePath(relativePath + "/" + path.getFileName().toString()); // Set the file path
-                    module.setDescription("Description for " + path.getFileName());
-                    module.setContentArea(healthyEating);
-                    moduleRepository.save(module);
+                    String moduleName = path.getFileName().toString().replace(".pdf", "");
+                    if (moduleKeywords.containsKey(moduleName)) {
+                        Module module = new Module();
+                        module.setName(moduleName);
+                        module.setFilePath(relativePath + "/" + path.getFileName().toString());
+                        module.setDescription("Description for " + moduleName);
+                        module.setContentArea(healthyEating);
+                        module.setKeywords(moduleKeywords.get(moduleName));
+                        moduleRepository.save(module);
+                    }
                 });
             } catch (Exception e) {
                 e.printStackTrace();
             }
         };
     }
+    private void readModuleKeywords(String filePath, HashMap<String, String> moduleKeywords) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line;
+            String currentModuleName = "";
+            StringJoiner keywordJoiner = new StringJoiner(", ");
 
-    private ContentArea createContentArea(ContentAreaRepository repository, String name) {
-        return repository.findByName(name).orElseGet(() -> {
-            ContentArea newContentArea = new ContentArea();
-            newContentArea.setName(name);
-            return repository.save(newContentArea);
-        });
+            while ((line = reader.readLine()) != null) {
+                if (line.matches("^\\d+\\.\\s.*")) { // Check if line is a module title
+                    if (!currentModuleName.isEmpty()) {
+                        moduleKeywords.put(currentModuleName, keywordJoiner.toString());
+                        keywordJoiner = new StringJoiner(", ");
+                    }
+                    currentModuleName = line.trim().split("\\.")[1].trim().split(":")[0].trim();
+                } else if (!line.trim().isEmpty() && line.startsWith("•")) {
+                    String keyword = line.trim().substring(1).trim(); // Remove bullet point
+                    keywordJoiner.add(keyword);
+                }
+            }
+            if (!currentModuleName.isEmpty()) {
+                moduleKeywords.put(currentModuleName, keywordJoiner.toString());
+            }
+        }
     }
+
+    private ContentArea createContentArea(String name) {
+        ContentArea contentArea = new ContentArea();
+        contentArea.setName(name);
+        return contentAreaRepository.save(contentArea);
+    }
+//    private void readModuleKeywords(String filePath, HashMap<String, String> moduleKeywords) throws Exception {
+//        try (FileInputStream fis = new FileInputStream(filePath);
+//             XWPFDocument document = new XWPFDocument(fis)) {
+//            List<XWPFParagraph> paragraphs = document.getParagraphs();
+//
+//            for (int i = 0; i < paragraphs.size() - 1; i++) {
+//                XWPFParagraph currentPara = paragraphs.get(i);
+//                String text = currentPara.getText();
+//                if (text.startsWith("Module Title and Description")) {
+//                    String moduleName = text.split(":")[1].trim();
+//                    // Assuming the next paragraph contains the keywords
+//                    String keywords = paragraphs.get(i + 1).getText();
+//                    moduleKeywords.put(moduleName, keywords);
+//                }
+//            }
+//        }
+//    }
+
 
     @Bean
     public CommandLineRunner addQuestions(QuestionRepository questionRepository) {
