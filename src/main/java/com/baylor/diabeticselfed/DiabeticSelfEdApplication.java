@@ -17,6 +17,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -44,6 +45,11 @@ public class DiabeticSelfEdApplication {
 
     @Autowired
     private ModuleRepository moduleRepository;
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(DiabeticSelfEdApplication.class, args);

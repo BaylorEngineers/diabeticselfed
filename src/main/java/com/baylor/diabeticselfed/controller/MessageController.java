@@ -114,7 +114,7 @@ public class MessageController {
         List<MessageDTO> messageDTOList = new ArrayList<>();
         for (Message message:messageList
              ) {
-            if(!message.getIsRead()){
+            if(!message.getIsRead() && message.getReceiver().getId() == user1.getId()){
                 message.setIsRead(true);
                 messageRepository.save(message);
             }
