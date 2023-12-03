@@ -82,6 +82,7 @@ public class MessageService {
                     dto.setReceiverLastName(receiver.getLastname());
                     dto.setContent(lastMessage.getContent());
                     dto.setTimestamp(lastMessage.getTimestamp());
+                    dto.setRead(lastMessage.getIsRead());
 
                     lastMessagesDTOs.add(dto);
                 }

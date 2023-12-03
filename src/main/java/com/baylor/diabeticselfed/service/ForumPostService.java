@@ -42,7 +42,6 @@ public class ForumPostService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
 
         forumPost.setPatient(patient);
-//        patient.getForumPosts().add(forumPost);
 
         return forumPostRepository.save(forumPost);
     }
@@ -50,14 +49,7 @@ public class ForumPostService {
         return forumPostRepository.findById(postId);
     }
     @Transactional
-//    public List<ForumPost> findAllPostsByPatientId(Long patientId) {
-//        // Check if patient exists
-//        boolean patientExists = patientRepository.existsById(patientId);
-//        if(!patientExists) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No patient found with ID: " + patientId);
-//        }
-//        return forumPostRepository.findByPatient_Id(patientId);
-//    }
+
     public List<newForumPostDTO> findAllPostsByPatientId(Long patientId) {
         boolean patientExists = patientRepository.existsById(patientId);
         if(!patientExists) {
@@ -121,5 +113,11 @@ public class ForumPostService {
     }
     public Comment saveComment(Comment comment) {
         return commentRepository.save(comment);
+    }
+
+
+    public List<newForumPostDTO> searchPosts(String searchValue, Principal principal) {
+        List<ForumPost> posts = forumPostRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCase(searchValue);
+        return posts.stream().map(post -> DtoConverter.toForumPostDTO(post, principal)).collect(Collectors.toList());
     }
 }

@@ -11,4 +11,5 @@ public class LastMessageDTO {
     private String receiverLastName;
     private String content;  // Last message content
     private Date timestamp;  // Time of the last message
+    private boolean isRead;
 }

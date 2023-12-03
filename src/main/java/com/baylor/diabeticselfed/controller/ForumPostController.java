@@ -194,4 +194,8 @@ public class ForumPostController {
         return ResponseEntity.ok(savedChildComment);
     }
 
+    @GetMapping("/search")
+    public List<newForumPostDTO> searchPosts(@RequestParam String searchValue, Principal principal) {
+        return forumPostService.searchPosts(searchValue, principal);
+    }
 }

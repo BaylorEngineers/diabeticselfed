@@ -21,7 +21,7 @@ public class DtoConverter {
         dto.setTitle(post.getTitle());
         dto.setContent(post.getContent());
         dto.setPostDate(post.getPostDate());
-        if(post.getPatient().getPatientUser().getId() == user.getId() || post.getPatient().getPatientUser().getRole() == Role.CLINICIAN){
+        if(post.getPatient().getPatientUser().getId() == user.getId() || post.getPatient().getPatientUser().getRole() == Role.CLINICIAN || user.getRole() == Role.CLINICIAN){
             dto.setOwnerFirstName(post.getPatient().getPatientUser().getFirstname());
             dto.setOwnerLastName(post.getPatient().getPatientUser().getLastname());
         }else {
@@ -46,7 +46,7 @@ public class DtoConverter {
         dto.setId(comment.getId());
         dto.setContent(comment.getContent());
         dto.setCommentDate(comment.getCommentDate());
-        if(comment.getUser().getId() == user.getId() || comment.getUser().getRole() == Role.CLINICIAN) {
+        if(comment.getUser().getId() == user.getId() || comment.getUser().getRole() == Role.CLINICIAN || user.getRole() == Role.CLINICIAN) {
             dto.setCommenterFirstName(comment.getUser().getFirstname());
             dto.setCommenterLastName(comment.getUser().getLastname());
         }else{
