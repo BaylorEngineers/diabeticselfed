@@ -41,6 +41,14 @@ public class Patient extends User{
     @JsonIgnore
     private User patientUser;
 
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "message-receiver")
+    private List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "message-sender")
+    private List<Message> sentMessages;
+
 
 //    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 //    @JsonManagedReference(value = "patient-forumpost")
