@@ -19,10 +19,10 @@ public class ChatGPTController {
         this.chatGPTService = chatGPTService;
     }
 
-    @PostMapping("/generate-response")
-    public Mono<ResponseEntity<ChatGPTResponse>> generateResponse(@RequestBody ChatGPTRequest request) {
-        return chatGPTService.executeCurlAndReturnResponse(request)
-                .map(response -> ResponseEntity.ok(new ChatGPTResponse(response)))
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-    }
+//    @PostMapping("/generate-response")
+//    public Mono<ResponseEntity<ChatGPTResponse>> generateResponse(@RequestBody ChatGPTRequest request) {
+//        return chatGPTService.executeCurlAndReturnResponse(request)
+//                .map(response -> ResponseEntity.ok(new ChatGPTResponse(response)))
+//                .defaultIfEmpty(ResponseEntity.notFound().build());
+//    }
 }

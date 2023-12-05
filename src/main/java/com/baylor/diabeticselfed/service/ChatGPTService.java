@@ -32,35 +32,63 @@ public class ChatGPTService {
         this.webClient = webClientBuilder.baseUrl(chatGPTApiUrl).build();
     }
 
-    public Mono<String> executeCurlAndReturnResponse(ChatGPTRequest request) {
-        return Mono.fromCallable(() -> {
-            String curlCommand = buildAndPrintCurlCommand(request);
+//    public Mono<String> executeCurlAndReturnResponse(ChatGPTRequest request) {
+//        return Mono.fromCallable(() -> {
+//            String curlCommand = buildAndPrintCurlCommand(request);
+//            StringBuilder responseBuilder = new StringBuilder();
+//
+//            try {
+//                ProcessBuilder processBuilder = new ProcessBuilder(curlCommand.split(" "));
+//                processBuilder.redirectErrorStream(true);
+//
+//                Process process = processBuilder.start();
+//                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+//                    String line;
+//                    while ((line = reader.readLine()) != null) {
+//                        responseBuilder.append(line).append("\n");
+//                    }
+//                }
+//
+//                int exitCode = process.waitFor();
+//                if (exitCode != 0) {
+//                    System.err.println("Curl command exited with code " + exitCode);
+//                    return "Error executing cURL command";
+//                }
+//            } catch (IOException | InterruptedException e) {
+//                e.printStackTrace();
+//                return "Error executing cURL command";
+//            }
+//
+//            return parseContentFromResponse(responseBuilder.toString());
+//        });
+//    }
+
+    public String executeCurlAndReturnResponseSync(ChatGPTRequest request) {
+        String curlCommand = buildAndPrintCurlCommand(request);
+
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(curlCommand.split(" "));
+            processBuilder.redirectErrorStream(true);
+
+            Process process = processBuilder.start();
             StringBuilder responseBuilder = new StringBuilder();
-
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder(curlCommand.split(" "));
-                processBuilder.redirectErrorStream(true);
-
-                Process process = processBuilder.start();
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        responseBuilder.append(line).append("\n");
-                    }
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBuilder.append(line).append("\n");
                 }
+            }
 
-                int exitCode = process.waitFor();
-                if (exitCode != 0) {
-                    System.err.println("Curl command exited with code " + exitCode);
-                    return "Error executing cURL command";
-                }
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-                return "Error executing cURL command";
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                throw new IOException("Curl command exited with code " + exitCode);
             }
 
             return parseContentFromResponse(responseBuilder.toString());
-        });
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+            return "Error executing cURL command";
+        }
     }
 
     private String parseContentFromResponse(String jsonResponse) {
@@ -90,24 +118,27 @@ public class ChatGPTService {
     }
 
 
-    private String buildPrompt(ChatGPTRequest request) {
-        return String.format(
-                "Here is a profile:\n- Name: %s\n- Age: %d\n- Education: %s\n- Occupation: %s\n- Interests: %s\n- Background: %s\n- Goal: %s\n\n"
-                        + "Based on this profile, provide a motivational message as the user did not adhere to a " +
-                        "healthy diet in the past few days. Don't write more than 30 words, be concise and always write " +
-                        "positive motivational message.",
-                request.getName(),
-                request.getAge(),
-                request.getEducation(),
-                request.getOccupation(),
-                request.getInterests(),
-                request.getBackground(),
-                request.getGoal()
-        );
-    }
+//    private String buildPrompt(ChatGPTRequest request) {
+//        return String.format(
+//                "Here is a profile:\n- Name: %s\n- Age: %d\n- Education: %s\n- Occupation: %s\n- Interests: %s\n- Background: %s\n- Goal: %s\n\n"
+//                        + "Based on this profile, provide a motivational message as the user did not adhere to a " +
+//                        "healthy diet in the past few days. Don't write more than 30 words, be concise and always write " +
+//                        "positive motivational message.",
+//                request.getName(),
+//                request.getAge(),
+//                request.getEducation(),
+//                request.getOccupation(),
+//                request.getInterests(),
+//                request.getBackground(),
+//                request.getGoal()
+//        );
+//    }
 
     private String buildAndPrintCurlCommand(ChatGPTRequest request) {
-        String prompt = buildPrompt(request);
+//        String prompt = buildPrompt(request);
+
+        String prompt = request.getPrompt();
+
 
         Map<String, Object> messageContent = new HashMap<>();
         messageContent.put("role", "user");
