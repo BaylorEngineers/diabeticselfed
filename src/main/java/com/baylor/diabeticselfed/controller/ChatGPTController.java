@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/chatgpt")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ChatGPTController {
 
     private final ChatGPTService chatGPTService;
@@ -20,7 +21,7 @@ public class ChatGPTController {
 
     @PostMapping("/generate-response")
     public Mono<ResponseEntity<ChatGPTResponse>> generateResponse(@RequestBody ChatGPTRequest request) {
-        return chatGPTService.getChatGPTResponse(request)
+        return chatGPTService.executeCurlAndReturnResponse(request)
                 .map(response -> ResponseEntity.ok(new ChatGPTResponse(response)))
                 .defaultIfEmpty(ResponseEntity.notFound().build());
     }

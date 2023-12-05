@@ -57,11 +57,11 @@ public class MotivationalMessageService {
         System.out.println(lastThree.size());
 
 // TODO: uncomment this to show generate motivational message if consicutive survey response is no three times
-//        for (Survey response: lastThree) {
-//            if (response.getAnswer()) {
-//                getMotivationalMessage = false;
-//            }
-//        }
+        for (Survey response: lastThree) {
+            if (response.getAnswer()) {
+                getMotivationalMessage = false;
+            }
+        }
 
         if(getMotivationalMessage /*&& lastThree.size() == 3*/) {
             message.setPatient(patient);
@@ -72,67 +72,13 @@ public class MotivationalMessageService {
             } else {
                 dummy = "I understand that maintaining a healthy diet can be challenging at times. Remember, setbacks are a natural part of any journey. Stay motivated, and know that you have the strength to get back on track. Your commitment to your well-being is truly admirable.";
             }
-
-
+            System.out.println(patient);
             message.setMessage_content(dummy);
-            //getFromChatGPT(prompt)
         } else {
             message.setPatient(patient);
             message.setMessage_content(null);
         }
         return message;
-
-
     }
-
-    public String getFromChatGPT(String prompt) {
-        String url = "https://api.openai.com/v1/chat/completions";
-        String apiKey = "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";
-        String model = "gpt-3.5-turbo";
-
-        try {
-            URL obj = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
-            connection.setRequestProperty("Content-Type", "application/json");
-
-            // The request body
-            String body = "{\"model\": \"" + model + "\", \"messages\": [{\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
-            connection.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(body);
-            writer.flush();
-            writer.close();
-
-            // Response from ChatGPT
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-
-            StringBuffer response = new StringBuffer();
-
-            while ((line = br.readLine()) != null) {
-                response.append(line);
-            }
-            br.close();
-
-            // calls the method to extract the message.
-            return extractMessageFromJSONResponse(response.toString());
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-
-    }
-    public static String extractMessageFromJSONResponse(String response) {
-        int start = response.indexOf("content")+ 11;
-
-        int end = response.indexOf("\"", start);
-
-        return response.substring(start, end);
-
-    }
-
 
 }

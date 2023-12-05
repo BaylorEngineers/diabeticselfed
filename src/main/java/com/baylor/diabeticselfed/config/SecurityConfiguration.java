@@ -47,6 +47,7 @@ public class SecurityConfiguration {
             "api/v1/question/**",
             "api/v1/motivationalmessage/**",
             "api/v1/weight/first/weightReport",
+            "/api/chatgpt/**",
             "/ws/**"};
 
 //     "/api/v1/messages/**",

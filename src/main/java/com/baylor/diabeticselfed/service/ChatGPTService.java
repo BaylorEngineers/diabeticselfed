@@ -1,14 +1,21 @@
 package com.baylor.diabeticselfed.service;
 
 import com.baylor.diabeticselfed.dto.ChatGPTRequest;
-import com.baylor.diabeticselfed.dto.OpenAIRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ChatGPTService {
@@ -25,32 +32,70 @@ public class ChatGPTService {
         this.webClient = webClientBuilder.baseUrl(chatGPTApiUrl).build();
     }
 
-    public Mono<String> getChatGPTResponse(ChatGPTRequest request) {
+    public Mono<String> executeCurlAndReturnResponse(ChatGPTRequest request) {
+        return Mono.fromCallable(() -> {
+            String curlCommand = buildAndPrintCurlCommand(request);
+            StringBuilder responseBuilder = new StringBuilder();
 
-        System.out.println(request.getName() + " " + request.getBackground() + " " + request.getOccupation());
-        System.out.println(request.getInterests() + " " + request.getAge());
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder(curlCommand.split(" "));
+                processBuilder.redirectErrorStream(true);
 
-        String prompt = buildPrompt(request);
-        System.out.println(prompt);
-        OpenAIRequest openAIRequest = new OpenAIRequest("gpt-3.5-turbo", prompt, 150);
+                Process process = processBuilder.start();
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        responseBuilder.append(line).append("\n");
+                    }
+                }
 
-        String curlCommand = buildCurlCommand(openAIRequest);
+                int exitCode = process.waitFor();
+                if (exitCode != 0) {
+                    System.err.println("Curl command exited with code " + exitCode);
+                    return "Error executing cURL command";
+                }
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+                return "Error executing cURL command";
+            }
 
-        System.out.println(curlCommand);
-
-        return webClient.post()
-                .uri("/v1/engines/davinci-codex/completions")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header("Authorization", "Bearer " + openaiApiKey)
-                .bodyValue(openAIRequest)
-                .retrieve()
-                .bodyToMono(String.class);
+            return parseContentFromResponse(responseBuilder.toString());
+        });
     }
+
+    private String parseContentFromResponse(String jsonResponse) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+            // Debug: Print the entire JSON response
+            System.out.println("JSON Response: " + rootNode.toPrettyString());
+
+            JsonNode choicesNode = rootNode.path("choices");
+            if (!choicesNode.isEmpty() && choicesNode.isArray()) {
+                JsonNode firstChoice = choicesNode.get(0);
+                JsonNode messageNode = firstChoice.path("message");
+                if (!messageNode.isMissingNode()) {
+                    return messageNode.path("content").asText();
+                } else {
+                    return "Message node is missing";
+                }
+            } else {
+                return "Choices node is missing or not an array";
+            }
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return "Error parsing JSON response: " + e.getMessage();
+        }
+    }
+
 
     private String buildPrompt(ChatGPTRequest request) {
         return String.format(
                 "Here is a profile:\n- Name: %s\n- Age: %d\n- Education: %s\n- Occupation: %s\n- Interests: %s\n- Background: %s\n- Goal: %s\n\n"
-                        + "Based on this profile, provide a motivational message as the user did not adhere to a healthy diet in the past few days.",
+                        + "Based on this profile, provide a motivational message as the user did not adhere to a " +
+                        "healthy diet in the past few days. Don't write more than 30 words, be concise and always write " +
+                        "positive motivational message.",
                 request.getName(),
                 request.getAge(),
                 request.getEducation(),
@@ -61,20 +106,36 @@ public class ChatGPTService {
         );
     }
 
-    private String buildCurlCommand(OpenAIRequest openAIRequest) {
+    private String buildAndPrintCurlCommand(ChatGPTRequest request) {
+        String prompt = buildPrompt(request);
+
+        Map<String, Object> messageContent = new HashMap<>();
+        messageContent.put("role", "user");
+        messageContent.put("content", prompt);
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", "gpt-3.5-turbo");
+        requestBody.put("messages", Collections.singletonList(messageContent));
+        requestBody.put("max_tokens", 60);  // Limiting the output to approximately 30 words
+
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String jsonBody = objectMapper.writeValueAsString(openAIRequest);
-            String escapedJsonBody = jsonBody.replace("\"", "\\\"");
+            String requestBodyJson = objectMapper.writeValueAsString(requestBody);
+            String escapedJsonBody = requestBodyJson.replace("\"", "\\\"");
 
-            return "curl -X POST " +
-                    chatGPTApiUrl + "/v1/engines/davinci-codex/completions " +
+            String curlCommand = "curl -s -S -X POST " +
+                    chatGPTApiUrl + "/v1/chat/completions " +
                     "-H \"Content-Type: application/json\" " +
                     "-H \"Authorization: Bearer " + openaiApiKey + "\" " +
                     "-d \"" + escapedJsonBody + "\"";
+
+            System.out.println("cURL Command: " + curlCommand);
+            return curlCommand;
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return "Error building cURL command";
         }
     }
+
+
 }
