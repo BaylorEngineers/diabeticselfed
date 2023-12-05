@@ -6,8 +6,19 @@ RUN mvn -f /home/app/pom.xml clean package
 
 # Stage 2: Create the Docker container with OpenJDK 17
 FROM openjdk:17-slim
+
+# Install PostgreSQL
+RUN apt-get update \
+    && apt-get install -y postgresql postgresql-contrib \
+    && service postgresql start
+
+
 COPY --from=build /home/app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
+
+
+# Copy the built jar file
+# COPY --from=build /home/app/target/*.jar app.jar
 
 
 # Set environment variables
