@@ -5,7 +5,7 @@ COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
 
 # Stage 2: Create the Docker container with OpenJDK 17
-FROM openjdk:17-jre-slim
+FROM openjdk:17-slim
 COPY --from=build /home/app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
 
