@@ -1,9 +1,9 @@
 # Stage 1: Build the application with Maven and JDK 17
 FROM maven:3.8.4-openjdk-17-slim AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-#RUN mvn -f /home/app/pom.xml clean package
-RUN mvn -f /home/app/pom.xml clean package -DskipTests
+COPY src /home/diabeticselfed/src
+COPY pom.xml /home/diabeticselfed
+#RUN mvn -f /home/diabeticselfed/pom.xml clean package
+RUN mvn -f /home/diabeticselfed/pom.xml clean package -DskipTests
 
 
 # Stage 2: Create the Docker container with OpenJDK 17
@@ -19,12 +19,12 @@ RUN service postgresql start \
     && su - postgres -c "psql -c \"CREATE USER postgres WITH PASSWORD 'admin';\"" \
     && su - postgres -c "createdb -O postgres diabeticselfed"
 
-COPY --from=build /home/app/target/*.jar app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY --from=build /home/diabeticselfed/target/*.jar diabeticselfed.jar
+ENTRYPOINT ["java","-jar","/diabeticselfed.jar"]
 
 
 # Copy the built jar file
-# COPY --from=build /home/app/target/*.jar app.jar
+# COPY --from=build /home/diabeticselfed/target/*.jar diabeticselfed.jar
 
 
 # Set environment variables
@@ -50,4 +50,4 @@ ENV APPLICATION_SECURITY_JWT_EXPIRATION=86400000
 ENV APPLICATION_SECURITY_JWT_REFRESH_TOKEN_EXPIRATION=604800000
 
 # Define the command to run your app
-ENTRYPOINT ["java","-jar","/app.jar"]
+ENTRYPOINT ["java","-jar","/diabeticselfed.jar"]
