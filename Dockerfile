@@ -1,12 +1,14 @@
-FROM maven:3.6.3-jdk-11-slim AS build
+# Stage 1: Build the application with Maven and JDK 17
+FROM maven:3.8.4-openjdk-17-slim AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package
 
-# Stage 2: Create the Docker container
-FROM openjdk:11-jre-slim
+# Stage 2: Create the Docker container with OpenJDK 17
+FROM openjdk:17-jre-slim
 COPY --from=build /home/app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
+
 
 # Set environment variables
 ENV SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/diabeticselfed
