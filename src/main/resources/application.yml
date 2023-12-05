@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/diabeticselfed
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://dpg-clnci4le89qs739dbju0-a:5432/diabeticselfed
+    username: admin
+    password: FHS8LoOoNk623oTf90948lJHQBEbtK3Q
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
