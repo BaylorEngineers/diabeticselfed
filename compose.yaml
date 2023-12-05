@@ -1,1 +1,27 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: postgres://admin:FHS8LoOoNk623oTf90948lJHQBEbtK3Q@dpg-clnci4le89qs739dbju0-a/diabeticselfed
+      DATABASE_USERNAME: admin
+      DATABASE_PASSWORD: FHS8LoOoNk623oTf90948lJHQBEbtK3Q
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: diabeticselfed
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
 
