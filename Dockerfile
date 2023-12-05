@@ -12,6 +12,10 @@ RUN apt-get update \
     && apt-get install -y postgresql postgresql-contrib \
     && service postgresql start
 
+# Initialize the database and create a new user and database
+RUN service postgresql start \
+    && su - postgres -c "psql -c \"CREATE USER postgres WITH PASSWORD 'admin';\"" \
+    && su - postgres -c "createdb -O postgres diabeticselfed"
 
 COPY --from=build /home/app/target/*.jar app.jar
 ENTRYPOINT ["java","-jar","/app.jar"]
