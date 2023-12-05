@@ -93,7 +93,7 @@ public class DiabeticSelfEdApplication {
             moduleDetails.forEach((moduleName, details) -> {
                 String description = details[0];
                 String keywords = details[1];
-                System.out.println("Module: " + moduleName + " - Description: " + description + " - Keywords: " + keywords);
+//                System.out.println("Module: " + moduleName + " - Description: " + description + " - Keywords: " + keywords);
             });
 
             String relativePath = "contents/HealthyEating";

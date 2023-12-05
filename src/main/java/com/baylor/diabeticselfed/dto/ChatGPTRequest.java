@@ -9,11 +9,15 @@ import lombok.*;
 @Getter
 @Setter
 public class ChatGPTRequest {
-    private String name;
-    private int age;
-    private String education;
-    private String occupation;
-    private String interests;
-    private String background;
-    private String goal;
+    private String prompt;
 }
+
+//public class ChatGPTRequest {
+//    private String name;
+//    private int age;
+//    private String education;
+//    private String occupation;
+//    private String interests;
+//    private String background;
+//    private String goal;
+//}

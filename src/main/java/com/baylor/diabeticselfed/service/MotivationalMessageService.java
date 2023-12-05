@@ -1,33 +1,29 @@
 package com.baylor.diabeticselfed.service;
 
+import com.baylor.diabeticselfed.dto.ChatGPTRequest;
 import com.baylor.diabeticselfed.entities.MotivationalMessage;
 import com.baylor.diabeticselfed.entities.Patient;
 import com.baylor.diabeticselfed.entities.Survey;
 import com.baylor.diabeticselfed.repository.MotivationalMessageRepository;
 import com.baylor.diabeticselfed.repository.SurveyRepository;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MotivationalMessageService {
-    private final MotivationalMessageRepository motivationalMessageRepository;
 
     @Autowired
+    private final MotivationalMessageRepository motivationalMessageRepository;
     private final SurveyRepository surveyRepository;
+    private final ChatGPTService chatGPTService;
 
     public MotivationalMessage recordMotivationalMessage(Patient patient, Date dateT, String content) {
         MotivationalMessage m = new MotivationalMessage();
@@ -43,96 +39,35 @@ public class MotivationalMessageService {
     }
 
     public MotivationalMessage generateMotivationalMessage(Patient patient) {
-
-        //check if answered no three times
-        List<Survey> surveyList = surveyRepository.findByOrderByIdAsc();
-        int CONSECUTIVE_RESPONSE = 1;
-
-        List<Survey> lastThree = surveyList.subList(Math.max(surveyList.size() - CONSECUTIVE_RESPONSE, 0), surveyList.size());
-
-
-        boolean getMotivationalMessage = true;
-        MotivationalMessage message = new MotivationalMessage();
-
-        System.out.println(lastThree.size());
-
-// TODO: uncomment this to show generate motivational message if consicutive survey response is no three times
-//        for (Survey response: lastThree) {
-//            if (response.getAnswer()) {
-//                getMotivationalMessage = false;
-//            }
-//        }
-
-        if(getMotivationalMessage /*&& lastThree.size() == 3*/) {
-            message.setPatient(patient);
-            String prompt = "Give me a random motivational quote";
-            String dummy = "";
-            if (lastThree.get(0).getAnswer()) {
-                dummy = "Congratulations on your remarkable commitment to a healthy diet! Your dedication and hard work are inspiring. Keep up the excellent work, and know that you're making a positive difference in your life.";
-            } else {
-                dummy = "I understand that maintaining a healthy diet can be challenging at times. Remember, setbacks are a natural part of any journey. Stay motivated, and know that you have the strength to get back on track. Your commitment to your well-being is truly admirable.";
-            }
-
-
-            message.setMessage_content(dummy);
-            //getFromChatGPT(prompt)
-        } else {
-            message.setPatient(patient);
-            message.setMessage_content(null);
-        }
-        return message;
-
-
-    }
-
-    public String getFromChatGPT(String prompt) {
-        String url = "https://api.openai.com/v1/chat/completions";
-        String apiKey = "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";
-        String model = "gpt-3.5-turbo";
-
         try {
-            URL obj = new URL(url);
-            HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Authorization", "Bearer " + apiKey);
-            connection.setRequestProperty("Content-Type", "application/json");
+            List<Survey> surveys = surveyRepository.findTop3ByPatientOrderByDateTDesc(patient);
 
-            // The request body
-            String body = "{\"model\": \"" + model + "\", \"messages\": [{\"role\": \"user\", \"content\": \"" + prompt + "\"}]}";
-            connection.setDoOutput(true);
-            OutputStreamWriter writer = new OutputStreamWriter(connection.getOutputStream());
-            writer.write(body);
-            writer.flush();
-            writer.close();
+            surveys.forEach(survey -> System.out.println("Survey Date: " + survey.getDateT() + ", Answer: " + survey.getAnswer()));
 
-            // Response from ChatGPT
-            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-
-            StringBuffer response = new StringBuffer();
-
-            while ((line = br.readLine()) != null) {
-                response.append(line);
+            if (surveys.size() == 3 && surveys.stream().allMatch(survey -> !survey.getAnswer())) {
+                String response = chatGPTService.executeCurlAndReturnResponseSync(prepareChatGPTRequest(patient));
+                return recordMotivationalMessage(patient, new Date(), response);
             }
-            br.close();
 
-            // calls the method to extract the message.
-            return extractMessageFromJSONResponse(response.toString());
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            return recordMotivationalMessage(patient, new Date(), "You're awesome");
+        } catch (Exception e) {
+            System.err.println("Error occurred: " + e.getMessage());
+            return recordMotivationalMessage(patient, new Date(), "An error occurred. You're still awesome!");
         }
-
-
-    }
-    public static String extractMessageFromJSONResponse(String response) {
-        int start = response.indexOf("content")+ 11;
-
-        int end = response.indexOf("\"", start);
-
-        return response.substring(start, end);
-
     }
 
+    private int calculateAge(Date dateOfBirth) {
+        LocalDate dob = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate currentDate = LocalDate.now();
+        return Period.between(dob, currentDate).getYears();
+    }
+
+    private ChatGPTRequest prepareChatGPTRequest(Patient patient) {
+        int age = calculateAge(patient.getDOB());
+        String prompt = "The patient " + patient.getName() + ", aged " + age +
+                ", has not adhered to a healthy diet in the past few days. " +
+                "Please provide a positive, motivational message in 30 words or less.";
+        return new ChatGPTRequest(prompt);
+    }
 
 }

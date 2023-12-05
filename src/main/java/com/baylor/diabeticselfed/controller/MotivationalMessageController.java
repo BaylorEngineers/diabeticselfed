@@ -22,6 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/motivationalmessage")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class MotivationalMessageController {
 
     @Autowired
@@ -36,6 +37,8 @@ public class MotivationalMessageController {
 
     @GetMapping("/get/{patientId}")
     public MotivationalMessage fetchSurveyByPatientId(@PathVariable Integer patientId, Principal connectedUser) {
+
+        System.out.println("In the controller");
 
         Patient p = patientRepository.findById(patientId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Patient not found"));
