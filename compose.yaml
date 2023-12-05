@@ -15,8 +15,8 @@ services:
     image: postgres:latest
     environment:
       POSTGRES_DB: diabeticselfed
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: admin
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: FHS8LoOoNk623oTf90948lJHQBEbtK3Q
     ports:
       - "5432:5432"
     volumes:
