@@ -88,7 +88,8 @@ public class DiabeticSelfEdApplication {
             createContentArea("Stress Reduction");
 
             HashMap<String, String[]> moduleDetails = new HashMap<>();
-            readModuleKeywords("contents/PreventT2Keywords.txt", moduleDetails);
+            System.out.println(System.getProperty("user.dir"));
+            readModuleKeywords("/diabeticselfed/contents/PreventT2Keywords.txt", moduleDetails);
 
             moduleDetails.forEach((moduleName, details) -> {
                 String description = details[0];
@@ -96,7 +97,7 @@ public class DiabeticSelfEdApplication {
 //                System.out.println("Module: " + moduleName + " - Description: " + description + " - Keywords: " + keywords);
             });
 
-            String relativePath = "contents/HealthyEating";
+            String relativePath = "/diabeticselfed/contents/HealthyEating";
             try (Stream<Path> paths = Files.walk(Paths.get(relativePath))) {
                 paths.filter(Files::isRegularFile).forEach(path -> {
                     String moduleName = path.getFileName().toString().replace(".pdf", "");
