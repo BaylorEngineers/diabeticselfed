@@ -1,17 +1,20 @@
 # Stage 1: Build the application with Maven and JDK 17
 FROM maven:3.8.4-openjdk-17-slim AS build
-COPY src /home/app/src
-COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
+COPY src /home/diabeticselfed/src
+COPY pom.xml /home/diabeticselfed
+RUN mvn -f /home/diabeticselfed/pom.xml clean package -DskipTests
 
 # Stage 2: Create the Docker container with OpenJDK 17
 FROM openjdk:17-slim
-COPY --from=build /home/app/target/*.jar app.jar
+
+# Copy the built jar file
+COPY --from=build /home/diabeticselfed/target/*.jar diabeticselfed.jar
 
 # Set environment variables
-ENV SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/diabeticselfed
-ENV SPRING_DATASOURCE_USERNAME=postgres
-ENV SPRING_DATASOURCE_PASSWORD=admin
+ENV SPRING_DATASOURCE_URL=jdbc:postgresql://dpg-clnci4le89qs739dbju0-a:5432/diabeticselfed
+ENV SPRING_DATASOURCE_USERNAME=admin
+ENV SPRING_DATASOURCE_PASSWORD=FHS8LoOoNk623oTf90948lJHQBEbtK3Q
+
 ENV SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
 ENV SPRING_MAIL_HOST=smtp.gmail.com
 ENV SPRING_MAIL_PORT=587
