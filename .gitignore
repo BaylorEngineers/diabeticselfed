@@ -13,8 +13,8 @@
 logs/
 
 ## Ignore application properties files (e.g., application.yml or application.yml)
-#/src/main/resources/application.yml
-#/src/main/resources/application.yml
+#/src/main/resources/application-example.yml
+#/src/main/resources/application-example.yml
 
 # Ignore build-specific files
 /build/
@@ -62,5 +62,5 @@ Thumbs.db
 build/
 
 # Ignore database configurations
-src/main/resources/application.yml
+src/main/resources/application-example.yml
 src/main/resources/application.properties
