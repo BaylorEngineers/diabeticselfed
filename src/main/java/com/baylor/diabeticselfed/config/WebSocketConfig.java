@@ -12,7 +12,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("https://stingray-app-uf6iy.ondigitalocean.app/")
+                .setAllowedOrigins("https://stingray-app-uf6iy.ondigitalocean.app")
                 .withSockJS();
     }
 

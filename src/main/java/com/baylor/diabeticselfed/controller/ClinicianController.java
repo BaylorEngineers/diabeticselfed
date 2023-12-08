@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/clinicians")
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 @RequiredArgsConstructor
 public class ClinicianController {
 

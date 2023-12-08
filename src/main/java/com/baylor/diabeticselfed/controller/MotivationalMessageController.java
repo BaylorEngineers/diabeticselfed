@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/motivationalmessage")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 public class MotivationalMessageController {
 
     @Autowired

@@ -21,7 +21,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/modules/progress")
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 @RequiredArgsConstructor
 public class ModuleProgressController {
 

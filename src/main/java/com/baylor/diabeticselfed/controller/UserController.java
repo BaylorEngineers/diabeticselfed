@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 @RequiredArgsConstructor
 public class UserController {
 

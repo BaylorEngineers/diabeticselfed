@@ -28,7 +28,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/survey")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 public class SurveyController {
 
     private final SurveyService surveyService;

@@ -28,7 +28,7 @@ import java.time.format.DateTimeFormatter;
 
 @RestController
 @RequestMapping("/api/v1/auth")
-@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
 @RequiredArgsConstructor
 public class AuthenticationController {
   @Autowired
@@ -38,7 +38,7 @@ public class AuthenticationController {
   private final InvitationRepository invitationRepository;
 
 
-  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
   @PostMapping("/invite")
   public ResponseEntity<?> inviteUser(@RequestBody InvitationDto invitationDto) {
     System.out.println(invitationDto.getEmail());
@@ -52,7 +52,7 @@ public class AuthenticationController {
     return new ResponseEntity<>(invitation, HttpStatus.CREATED);
   }
 
-  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
   @PostMapping("/register")
   public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
     if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -109,7 +109,7 @@ public class AuthenticationController {
 //  }
 
   @PostMapping("/authenticate")
-  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
+  @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app")
   public ResponseEntity<AuthenticationResponse> authenticate(
       @RequestBody AuthenticationRequest request) {
     return ResponseEntity.ok(service.authenticate(request));
