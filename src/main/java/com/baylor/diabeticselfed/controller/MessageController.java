@@ -51,7 +51,7 @@ public class MessageController {
 
 
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @PostMapping("/send")
     public ResponseEntity<?> sendMessage(@RequestBody MessageDTO messageDTO, Principal connectedUser) {
         try {
@@ -91,7 +91,7 @@ public class MessageController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @GetMapping("/last-messages/{userId}")
     public ResponseEntity<?> getLastMessagesForEachReceiver(@PathVariable Integer userId, Principal connectedUser) {
         try {
@@ -104,7 +104,7 @@ public class MessageController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @GetMapping("/conversation")
     public List<MessageDTO> getMessagesBetweenUsers(@RequestParam Integer userId1,
                                                  @RequestParam Integer userId2, Principal connectedUser) {

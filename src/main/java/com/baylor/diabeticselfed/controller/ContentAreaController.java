@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/content-areas")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 public class ContentAreaController {
 
     @Autowired

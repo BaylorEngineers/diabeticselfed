@@ -1,12 +1,12 @@
 spring:
   datasource:
-    url: jdbc:postgresql://dpg-clnci4le89qs739dbju0-a/diabeticselfed
-    username: admin
-    password: FHS8LoOoNk623oTf90948lJHQBEbtK3Q
+    url: jdbc:postgresql://db-postgresql-nyc3-83294-do-user-15314830-0.c.db.ondigitalocean.com:25060/diabeticselfed
+    username: doadmin
+    password: AVNS_wj-4V8SmQwhIGQ-KGPV
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     show-sql: false
     properties:
       hibernate:

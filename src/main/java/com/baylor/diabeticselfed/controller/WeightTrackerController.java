@@ -29,7 +29,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/api/v1/weight")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 public class WeightTrackerController {
 
     private final WeightTrackerService weightTrackerService;

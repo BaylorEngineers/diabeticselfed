@@ -26,7 +26,7 @@ import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/v1/modules/log")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 @RequiredArgsConstructor
 public class ModuleLogController {
 

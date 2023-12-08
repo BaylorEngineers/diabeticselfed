@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/chatgpt")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 public class ChatGPTController {
 
     private final ChatGPTService chatGPTService;

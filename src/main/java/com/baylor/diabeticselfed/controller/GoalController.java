@@ -19,7 +19,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/v1/goals")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 public class GoalController {
 
     private final GoalService goalService;

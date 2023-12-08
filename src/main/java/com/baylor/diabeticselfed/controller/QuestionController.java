@@ -14,7 +14,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/api/v1/question")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
 public class QuestionController {
 
     private final QuestionService questionService;
@@ -25,7 +25,7 @@ public class QuestionController {
         return new ResponseEntity<>("Question Uploaded", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @GetMapping("/get/{questionId}")
     public ResponseEntity<Optional<Question>> getPatientDetail(@PathVariable Integer questionId) {
         try {

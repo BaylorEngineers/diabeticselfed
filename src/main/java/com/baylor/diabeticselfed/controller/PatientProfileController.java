@@ -26,7 +26,7 @@ public class PatientProfileController {
     @Autowired
     PatientService patientService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @PostMapping("/submit")
     public ResponseEntity<?> updatePatient(@RequestBody PatientProfileDTO patientProfileDTO, Principal connectedUser) {
         try {
@@ -52,7 +52,7 @@ public class PatientProfileController {
         }
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
+    @CrossOrigin(origins = "https://stingray-app-uf6iy.ondigitalocean.app/")
     @GetMapping("/detail/{patientId}")
     public ResponseEntity<Patient> getPatientDetail(@PathVariable Integer patientId) {
         try {

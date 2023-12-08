@@ -14,7 +14,7 @@ public class MailService {
     public void sendInvitationEmail(String to, String token) {
         String subject = "Invitation to Register";
 //        String content = "Please use the following link to register: http://localhost:8080/api/register?token=" + token;
-        String content = "Please use the following link to register: http://localhost:3000/registration?token=" + token;
+        String content = "Please use the following link to register: https://stingray-app-uf6iy.ondigitalocean.app//registration?token=" + token;
 
 
         SimpleMailMessage message = new SimpleMailMessage();
