@@ -1,7 +1,6 @@
-
 spring:
   datasource:
-    url: jdbc:postgresql:db-postgresql-nyc3-83294-do-user-15314830-0.c.db.ondigitalocean.com:25060/diabeticselfed
+    url: jdbc:postgresql://db-postgresql-nyc3-83294-do-user-15314830-0.c.db.ondigitalocean.com:25060/diabeticselfed
     username: doadmin
     password: AVNS_wj-4V8SmQwhIGQ-KGPV
     driver-class-name: org.postgresql.Driver
