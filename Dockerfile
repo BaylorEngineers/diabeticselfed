@@ -7,9 +7,9 @@ RUN mvn -f /home/diabeticselfed/pom.xml clean package -DskipTests
 
 FROM openjdk:17-slim
 
-
-COPY --from=build /home/diabeticselfed/target/*.jar diabeticselfed.jar
 COPY --from=build /home/diabeticselfed/contents /diabeticselfed/contents
+COPY --from=build /home/diabeticselfed/target/*.jar diabeticselfed.jar
+
 
 EXPOSE 8080
 ENTRYPOINT ["java","-jar","/diabeticselfed.jar"]
