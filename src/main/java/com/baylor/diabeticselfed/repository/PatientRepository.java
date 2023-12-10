@@ -19,6 +19,9 @@ public interface PatientRepository extends JpaRepository<Patient, Integer> {
     @Query("SELECT p FROM Patient p JOIN FETCH p.patientUser u WHERE p.id = :patientId")
     Patient findPatientWithUserDetails(@Param("patientId") Integer patientId);
 
+    @Query("SELECT p FROM Patient p WHERE p.patientUser.id = :userId")
+    Patient findPatientByUserId(@Param("userId") Integer userId);
+
     @Query("SELECT p FROM Patient p WHERE p.patientUser.id IN :senderIds")
     List<Patient> findByIdInCustom(@Param("senderIds") List<Integer> senderIds);
 }

@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -33,6 +34,7 @@ public class User implements UserDetails {
   private String lastname;
   private String email;
   private String password;
+  private Date lastLoginDate;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Comment> userComments;
@@ -50,6 +52,7 @@ public class User implements UserDetails {
   @JsonBackReference(value = "user-receivedMessages")
   @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<Message> receivedMessages;
+
 //  @Override
 //  public Collection<? extends GrantedAuthority> getAuthorities() {
 //    return role.getAuthorities();

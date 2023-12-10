@@ -20,10 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/v1/survey")
@@ -47,16 +44,17 @@ public class SurveyController {
 
             Optional<Patient> p = patientRepository.findById(surveyDTO.getPatientId());
 //            var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
-
+            Date currentDate = new Date();
             Question q = questionRepository.findById(surveyDTO.getQuestionId())
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Question not found"));
 
             SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy", Locale.ENGLISH);
 
-            if (true || surveyService.findSurveyByPatientAndQuestionAndDateT(p.get(), q, formatter.parse(surveyDTO.getDateT())).isEmpty()) {
-                surveyResponseService.recordResponse(p.get(), formatter.parse(surveyDTO.getDateT()));
 
-                Survey s = surveyService.submitSurvey(p.get(), formatter.parse(surveyDTO.getDateT()), q, surveyDTO.getResponse());
+            if (surveyService.findSurveyByPatientAndQuestionAndDateT(p.get(), q, currentDate).isEmpty()) {
+                surveyResponseService.recordResponse(p.get(), currentDate);
+
+                Survey s = surveyService.submitSurvey(p.get(), currentDate, q, surveyDTO.getResponse());
 
                 return new ResponseEntity<>(surveyDTO, HttpStatus.OK);
             }
