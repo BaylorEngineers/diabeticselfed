@@ -25,5 +25,7 @@ public class AuthenticationResponse {
   private Integer patientID;
   @JsonProperty("clinicianID")
   private Integer clinicianID;
+  @JsonProperty("showSurvey")
+  private boolean showSurvey;
 
 }

@@ -6,6 +6,7 @@ import com.baylor.diabeticselfed.repository.ClinicianRepository;
 import com.baylor.diabeticselfed.repository.InvitationRepository;
 import com.baylor.diabeticselfed.repository.PatientRepository;
 import com.baylor.diabeticselfed.service.MailService;
+import com.baylor.diabeticselfed.service.SurveyService;
 import com.baylor.diabeticselfed.token.Token;
 import com.baylor.diabeticselfed.token.TokenRepository;
 import com.baylor.diabeticselfed.token.TokenType;
@@ -24,7 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -43,6 +46,9 @@ public class AuthenticationService {
   private final AuthenticationManager authenticationManager;
   @Autowired
   private MailService mailService;
+
+  @Autowired
+  SurveyService surveyService;
 
   @Transactional
   public Invitation createInvitation(String email, Role role) {
@@ -115,6 +121,7 @@ public class AuthenticationService {
                       request.getPassword()
               )
       );
+
       System.out.println("Authenticated successfully");
     } catch (AuthenticationException e) {
       System.out.println("Authentication failed: " + e.getMessage());
@@ -125,26 +132,55 @@ public class AuthenticationService {
     var user = repository.findByEmail(request.getEmail())
         .orElseThrow();
     System.out.println("Get Token for user:" + user.getId());
+
+
+    Date lastLoginDate = repository.getLastLoginDate(user.getId());
+
+    Date currentDate = new Date();
+    user.setLastLoginDate(currentDate);
+    repository.save(user);
+
+
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     revokeAllUserTokens(user);
     saveUserToken(user, jwtToken);
 //    System.out.println(user);
     Patient patient = new Patient();
-    if(user.getRole() == Role.PATIENT)
+    boolean showSurvey = false;
+    Patient patientByUserId = patientRepository.findPatientByUserId(user.getId());
+    if(user.getRole() == Role.PATIENT){
       patient = patientRepository.findByPatientUser(user).get();
+
+      //TODO: check if the user provided the answer for the survey today. if not, send showSurvey = true with AuthResponse
+      SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+      Date date = new Date();
+      System.out.println(formatter.format(date));
+
+      if (lastLoginDate == null) {
+        showSurvey = true;
+      } else {
+        showSurvey = surveyService.isFirstLoginToday(patient, lastLoginDate);
+      }
+
+    }
+
 //    System.out.println("Login:"+temp);
     Clinician clinician = new Clinician();
     if(user.getRole()==Role.CLINICIAN)
       clinician = clinicianRepository.findByClinicianUser(user).get();
+
+
+
     return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-            .role(user.getRole())
-            .userID(user.getId())
-            .patientID(patient.getId())
-            .clinicianID(clinician.getId())
-        .build();
+      .accessToken(jwtToken)
+          .refreshToken(refreshToken)
+          .role(user.getRole())
+          .userID(user.getId())
+          .patientID(patient.getId())
+          .clinicianID(clinician.getId())
+          .showSurvey(showSurvey)
+      .build();
   }
 
   private void saveUserToken(User user, String jwtToken) {

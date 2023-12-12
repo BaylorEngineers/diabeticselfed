@@ -20,5 +20,5 @@ public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<Survey> findTop3ByPatientOrderByDateTDesc(Patient patient);
 
 
-
+//    Optional<Survey> findSurveyByPatientAndDateT(Patient patient, Long questionId, Date dateT);
 }
