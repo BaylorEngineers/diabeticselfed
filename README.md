@@ -28,10 +28,10 @@ Open the `application.yml` file in the DiabeticSelfEd project directory and upda
 
 ```yaml
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/your_database_name
-    username: your_username
-    password: your_password
+   datasource:
+      url: jdbc:postgresql://localhost:5432/your_database_name
+      username: your_username
+      password: your_password
 ```
 
 - Replace your_database_name with the name of the database you created.
